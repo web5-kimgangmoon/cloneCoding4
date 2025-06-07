@@ -25,3 +25,11 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ## 6/05
 
 1. 피그마로 설계시작.
+
+## 6/06
+
+1. 피그마로 설계중
+
+## 6/07
+
+1. 놀았습니다. 죄송합니다.
