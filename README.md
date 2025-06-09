@@ -33,3 +33,8 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ## 6/07
 
 1. 놀았습니다. 죄송합니다.
+
+## 6/09
+
+1. 피그마로 설계중. 메인페이지 완료.
+2. 프로필과 공지 페이지, 추후 로그인 및 회원가입 페이지도 추가 필요.
