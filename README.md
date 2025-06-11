@@ -43,3 +43,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. 프로필과 알림 뼈대 작성완료.
 2. 로그인과 회원가입 페이지 필요.
+
+## 6/11
+
+1. 로그인 페이지 기본틀 작성완료. 로그인 모달과 회원가입 모달 추가 필요.
