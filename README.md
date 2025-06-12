@@ -47,3 +47,8 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ## 6/11
 
 1. 로그인 페이지 기본틀 작성완료. 로그인 모달과 회원가입 모달 추가 필요.
+
+## 6/12
+
+1. 모달 작성 및 상호작용 완료.
+2. 구현에 필요한 클론코딩 초안 작성 완료.
