@@ -60,3 +60,8 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ## 6/14
 
 1. 테이블 목록들 모음
+
+## 6/16
+
+1. erd 초안 완성.
+2. api 템플릿 올림.

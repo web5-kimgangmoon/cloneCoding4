@@ -16,4 +16,5 @@ posts
 
 viewDates
 작성자ID
+postID
 마지막 조회날짜
