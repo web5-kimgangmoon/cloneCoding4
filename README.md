@@ -52,3 +52,16 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. 모달 작성 및 상호작용 완료.
 2. 구현에 필요한 클론코딩 초안 작성 완료.
+
+## 6/13
+
+1. erd 작성 시작.
+
+## 6/14
+
+1. 테이블 목록들 모음
+
+## 6/16
+
+1. erd 초안 완성.
+2. api 템플릿 올림.
