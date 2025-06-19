@@ -80,3 +80,8 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ### 6/18
 
 1. 하루 쉬었습니다. 죄송합니다.
+
+### 6/19
+
+1. nest 학습
+   (https://docs.nestjs.com/pipes 클래스 검증기 전까지)
