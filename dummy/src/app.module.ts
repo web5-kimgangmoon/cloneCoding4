@@ -50,35 +50,58 @@ import {
   Module,
   NestModule,
   RequestMethod,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CatsModule } from './cat.module';
 // import { LoggerMiddleware } from './logger.middleware';
 import { CatController } from './cat.controller';
 import { logger } from './logger.middleware';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { RolesGuard } from './roles.guard';
+import { LoggingInterceptor } from './logging.interceptor';
 // import { HttpExceptionFilte } from './http-exception.filter';
 
+// @Module({
+//   // imports: [CatsModule],
+//   // providers: [
+//   //   {
+//   //     provide: APP_FILTER,
+//   //     useClass: HttpExceptionFilter,
+//   //   },
+//   // ],
+// })
+// export class Appmodule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     //   consumer
+//     //     .apply(LoggerMiddleware)
+//     //     .exclude(
+//     //       { path: 'cats', method: RequestMethod.GET },
+//     //       { path: 'cats', method: RequestMethod.POST },
+//     //       'cats/{*splat}',
+//     //     )
+//     //     .forRoutes(CatController);
+//     // }
+//     // consumer.apply(cors(), helmet(), logger).forRoutes(CatController);
+//     consumer.apply(logger).forRoutes(CatController);
+//   }
+// }
+
+// @Module({
+//   providers: [
+//     {
+//       provide: APP_PIPE,
+//       useClass: ValidationPipe,
+//     },
+//   ],
+// })
+// export class AppModule {}
+
+// @Module({
+//   providers: [{ provide: APP_GUARD, useClass: RolesGuard }],
+// })
+// export class AppModule {}
+
 @Module({
-  // imports: [CatsModule],
-  // providers: [
-  //   {
-  //     provide: APP_FILTER,
-  //     useClass: HttpExceptionFilter,
-  //   },
-  // ],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: LoggingInterceptor }],
 })
-export class Appmodule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    //   consumer
-    //     .apply(LoggerMiddleware)
-    //     .exclude(
-    //       { path: 'cats', method: RequestMethod.GET },
-    //       { path: 'cats', method: RequestMethod.POST },
-    //       'cats/{*splat}',
-    //     )
-    //     .forRoutes(CatController);
-    // }
-    // consumer.apply(cors(), helmet(), logger).forRoutes(CatController);
-    consumer.apply(logger).forRoutes(CatController);
-  }
-}
+export class AppModule {}
