@@ -86,3 +86,11 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 1. nest 학습
    (https://docs.nestjs.com/pipes 클래스 검증기 전까지)
 2. 문서 개요의 코드 다 따라쳐봤습니다.
+
+### 6/20
+
+1. 모든 코드 작성 완료
+
+### 6/21
+
+1. 하루 쉬었습니다 죄송합니다.
