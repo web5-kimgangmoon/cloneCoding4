@@ -20,6 +20,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ## 완료된 목표
 
 1. 6/12까지 피그마 설계 완료. 가능하면 ERD까지 작성하기.
+1. nestjs 6/20일까지 세팅이 가능할 수준까지 공부하기.(시도가능)
 
 ## 후순위 목표
 
@@ -27,7 +28,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 ## 현재 목표
 
-1. nestjs 6/20일까지 세팅이 가능할 수준까지 공부하기.
+1. nest 서버 구축.
 
 ### 6/05
 
@@ -94,3 +95,8 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ### 6/21
 
 1. 하루 쉬었습니다 죄송합니다.
+
+### 6/23
+
+1. nest 서버 구축중.
+2. api 문서 구상.
