@@ -20,15 +20,15 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ## 완료된 목표
 
 1. 6/12까지 피그마 설계 완료. 가능하면 ERD까지 작성하기.
-1. nestjs 6/20일까지 세팅이 가능할 수준까지 공부하기.(시도가능)
+2. nestjs 6/20일까지 세팅이 가능할 수준까지 공부하기.(시도가능)
+3. 6/15까지 api 문서 작성.(서버 코딩과 함께 작성하기)(6/24 완료)
 
 ## 후순위 목표
-
-1. 6/15까지 api 문서 작성.(서버 코딩과 함께 작성하기)
 
 ## 현재 목표
 
 1. nest 서버 구축.
+2. prisma 학습.
 
 ### 6/05
 
@@ -100,3 +100,10 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. nest 서버 구축중.
 2. api 문서 구상.
+
+### 6/24
+
+1. orm으로 prisma 선택. 학습 필요.
+   https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgresql
+
+2. api 문서 초안 작성 완료.
