@@ -1,10 +1,14 @@
 ## 게시글 리스트
 
-### /board
+### /board/all
+
+### session
+
+유저 아이디: number
 
 ### get
 
-### body
+### res
 
 {
 작성자 이름
@@ -18,13 +22,41 @@
 게시글 아이디
 }[]
 
+## 특정 게시글 리스트
+
+### /board/search
+
+### get
+
+### session
+
+유저 아이디: number
+
+### query
+
+type: own, notification
+list: posts,replies,likes
+
+### res
+
+{
+작성자 이름
+이메일
+내용
+이미지
+조회수
+댓글수
+좋아요수
+게시글 아이디
+}[]
+
 ## 특정 게시글 전체 불러오기
 
 ### /board/(board_id)
 
 ### get
 
-### body
+### res
 
 {
 작성자 이름
@@ -52,9 +84,36 @@
 
 ## 댓글 작성
 
+### post
+
+### session
+
+유저 아이디: number
+
+### body
+
+내용
+이미지: File
+
+## 유저 정보
+
+### /user
+
+### get
+
+### session
+
+유저 아이디: number
+
+### res
+
+유저 아이디: number
+이름
+이메일
+
 ## 유저 리스트
 
-### /user/list
+### /user/search
 
 ### get
 
@@ -62,8 +121,31 @@
 
 nick: 유저 닉네임
 
-### body
+### res
 
-유저 아이디
+유저 아이디: number
 유저 닉네임
 유저 이메일
+
+## 유저 회원가입
+
+### /user/regist
+
+### post
+
+### body
+
+이메일
+이름
+비밀번호
+
+## 유저 로그인
+
+### /user/login
+
+### post
+
+### body
+
+이메일
+비밀번호
