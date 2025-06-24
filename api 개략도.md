@@ -1,6 +1,6 @@
 ## 게시글 리스트
 
-### /board/all
+### /post/all
 
 ### session
 
@@ -22,9 +22,9 @@
 게시글 아이디
 }[]
 
-## 특정 게시글 리스트
+## 게시글 리스트 필터
 
-### /board/search
+### /post/filter
 
 ### get
 
@@ -50,9 +50,9 @@ list: posts,replies,likes
 게시글 아이디
 }[]
 
-## 특정 게시글 전체 불러오기
+## 특정 게시글 전체보기
 
-### /board/(board_id)
+### /post/(post_id)
 
 ### get
 
@@ -82,13 +82,29 @@ list: posts,replies,likes
 대댓글(댓글)[]
 }
 
-## 댓글 작성
+## 게시글 좋아요
+
+### /post/(post_id)/like
 
 ### post
 
 ### session
 
 유저 아이디: number
+
+## 글 작성
+
+### /post/(post_id)/reply
+
+### post
+
+### session
+
+유저 아이디: number
+
+### query
+
+reply_id: number
 
 ### body
 
@@ -111,20 +127,20 @@ list: posts,replies,likes
 이름
 이메일
 
-## 유저 리스트
+## 유저 필터
 
-### /user/search
+### /user/filter
 
 ### get
 
 ### query
 
-nick: 유저 닉네임
+name: 유저 이름
 
 ### res
 
 유저 아이디: number
-유저 닉네임
+유저 이름
 유저 이메일
 
 ## 유저 회원가입
@@ -147,5 +163,5 @@ nick: 유저 닉네임
 
 ### body
 
-이메일
+아이디\_문자열
 비밀번호
