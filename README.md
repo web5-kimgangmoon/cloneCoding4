@@ -107,3 +107,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
    https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project/relational-databases-typescript-postgresql
 
 2. api 문서 초안 작성 완료.
+
+### 6/25
+
+1. 프리즈마 1단계
