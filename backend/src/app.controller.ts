@@ -6,7 +6,13 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  async getHello(): Promise<{ id: number; postId: number; userId: number }[]> {
+    return await this.appService.getLike();
+  }
+
+  @Get('/add')
+  async addHello(): Promise<string> {
+    await this.appService.addLike();
+    return 'alright';
   }
 }

@@ -1,0 +1,49 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id Int @id @default(autoincrement())
+    name String @db.VarChar(30)
+    email String @db.VarChar(100)
+    password String @db.VarChar(20)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Like Like[]
+    ViewDate ViewDate[]
+}
+
+model Post {
+    id Int @id @default(autoincrement())
+    title String @db.VarChar(40)
+    content String @db.VarChar(3000)
+    imgLink String? @db.VarChar(1000)
+    viewCnt Int @default(0)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Like Like[]
+    ViewDate ViewDate[]
+}
+
+model Like {
+    id Int @id @default(autoincrement())
+    userId Int
+    postId Int
+    User User @relation(fields: [userId], references:[id], onDelete: NoAction, onUpdate: NoAction, map: "Like_idfk_1")
+    Post Post @relation(fields: [postId], references:[id], onDelete: NoAction, onUpdate: NoAction, map:"Like_idfk_2")
+}
+
+model ViewDate{
+    id Int @id @default(autoincrement())
+    lastView DateTime
+    writerId Int
+    postId Int
+    Writer User @relation(fields:[writerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"ViewDate_idfk_1")
+    Post Post @relation(fields:[postId], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"ViewDate_idfk_2")
+}
