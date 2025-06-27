@@ -117,3 +117,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 1. 데이터베이스 스키마 초안, prisma 형식으로 작성완료.
 2. db 업데이트와 요청 동작 확인완료.
 3. 그외 자잘한 수정사항.(테이블명이나 viewCnt의 default값을 0으로.)
+
+### 6/27
+
+1. 하루 쉬었습니다 죄송합니다.
