@@ -121,3 +121,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ### 6/27
 
 1. 하루 쉬었습니다 죄송합니다.
+
+### 6/28
+
+1. 기본적인 패스 분배 및, 파일 생성
