@@ -1,5 +1,6 @@
-import { Like } from './Like.interface';
-import { ViewDate } from './viewDate.interface';
+// import { Post } from '@prisma/client';
+// import { Like } from './Like.interface';
+// import { ViewDate } from './viewDate.interface';
 
 export interface User {
   id: number;
@@ -8,6 +9,7 @@ export interface User {
   password: string;
   createdAt: Date;
   updatedAt: Date;
-  Like: Like[];
-  ViewDate: ViewDate[];
+  // Like: Like[];
+  // ViewDate: ViewDate[];
+  // Post: Post[];
 }

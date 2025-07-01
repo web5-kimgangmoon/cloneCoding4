@@ -129,3 +129,10 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ### 6/30
 
 1. 하루 쉬었습니다. 죄송합니다.
+
+### 7/1
+
+1. api문서에서 crud 중 post의 u와 d 기능추가.
+2. 필요없는 테이블의 속성 삭제.(스키마 변경)
+3. figma에서 간단한 요소 하나 추가.
+4. zod를 활용한 타입검증 작성중.

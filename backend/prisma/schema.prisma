@@ -17,26 +17,31 @@ model User {
     updatedAt DateTime @updatedAt
     Like Like[]
     ViewDate ViewDate[]
+    Post Post[]
 }
 
 model Post {
     id Int @id @default(autoincrement())
-    title String @db.VarChar(40)
+    writerId Int
+    replyId Int?
     content String @db.VarChar(3000)
     imgLink String? @db.VarChar(1000)
     viewCnt Int @default(0)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    repliedPost Post[] @relation("Reply")
     Like Like[]
     ViewDate ViewDate[]
+    Writer User @relation(fields:[writerId], references: [id], onDelete:NoAction, onUpdate: NoAction, map:"PostIdfk1")
+    reply Post? @relation("Reply", fields: [replyId], references: [id], onDelete: NoAction,onUpdate: NoAction, map:"PostIdfk2")
 }
 
 model Like {
     id Int @id @default(autoincrement())
     userId Int
     postId Int
-    User User @relation(fields: [userId], references:[id], onDelete: NoAction, onUpdate: NoAction, map: "Like_idfk_1")
-    Post Post @relation(fields: [postId], references:[id], onDelete: NoAction, onUpdate: NoAction, map:"Like_idfk_2")
+    User User @relation(fields: [userId], references:[id], onDelete: NoAction, onUpdate: NoAction, map: "LikeIdfk1")
+    Post Post @relation(fields: [postId], references:[id], onDelete: NoAction, onUpdate: NoAction, map:"LikeIdfk2")
 }
 
 model ViewDate{
@@ -44,6 +49,6 @@ model ViewDate{
     lastView DateTime
     writerId Int
     postId Int
-    Writer User @relation(fields:[writerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"ViewDate_idfk_1")
-    Post Post @relation(fields:[postId], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"ViewDate_idfk_2")
+    Writer User @relation(fields:[writerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"ViewDateIdfk1")
+    Post Post @relation(fields:[postId], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"ViewDateIdfk2")
 }

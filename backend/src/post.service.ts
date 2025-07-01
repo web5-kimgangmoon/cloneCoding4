@@ -1,11 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './interface/user.interface';
+import { prisma } from './main';
 
 @Injectable()
 export class PostService {
-  private readonly users: User[] = [];
-  async create() {}
-  async update() {}
-  async findAll() {}
-  async findOne() {}
+  async create(content: string, writerId: number, imgLink?: string) {
+    return await prisma.post.create({
+      data: { content, imgLink, writerId },
+    });
+  }
+  async update(id: number, content: string, imgLink: string) {
+    return await prisma.post.update({
+      where: { id },
+      data: { content, imgLink },
+    });
+  }
+  async findAll(writerId?: number) {
+    return await prisma.post.findMany({
+      where: writerId ? { writerId } : undefined,
+    });
+  }
+  async findOne(id: number) {
+    return await prisma.post.findUnique({ where: { id } });
+  }
+  async deletePost(id: number) {
+    return await prisma.post.delete({ where: { id } });
+  }
 }

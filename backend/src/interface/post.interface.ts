@@ -1,14 +1,16 @@
-import { Like } from './Like.interface';
-import { ViewDate } from './viewDate.interface';
+// import { Like } from './Like.interface';
+// import { ViewDate } from './viewDate.interface';
 
 export interface Post {
   id: number;
-  title: string;
+  writerId: number;
+  replyId?: number;
   content: string;
   imgLink?: string;
   viewCnt: number;
   createdAt: Date;
   updatedAt: Date;
-  Like: Like[];
-  ViewDate: ViewDate[];
+  // Like: Like[];
+  // ViewDate: ViewDate[];
+  // repliedPost: Post[];
 }

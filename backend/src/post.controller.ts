@@ -7,16 +7,20 @@ import {
   Post,
   Query,
   Session,
+  UsePipes,
 } from '@nestjs/common';
 import { PostService } from './post.service';
+import { ZodValidationPipe } from './zod/zodValidationPipe';
+import { CreateId, createIdSchema } from './zod/idCheck';
 
 @Controller('/post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('/')
-  post(
-    @Query('reply') replyId: string,
+  @UsePipes(new ZodValidationPipe(createIdSchema))
+  async post(
+    @Query('reply') replyId: CreateId,
     @Body() body: { content: string; img?: string },
   ) {}
 
