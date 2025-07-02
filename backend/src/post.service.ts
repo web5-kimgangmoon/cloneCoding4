@@ -3,20 +3,25 @@ import { prisma } from './main';
 
 @Injectable()
 export class PostService {
-  async create(content: string, writerId: number, imgLink?: string) {
+  async create(
+    content: string,
+    writer_id: number,
+    img_link?: string,
+    reply_id?: number,
+  ) {
     return await prisma.post.create({
-      data: { content, imgLink, writerId },
+      data: { content, img_link, writer_id, reply_id },
     });
   }
-  async update(id: number, content: string, imgLink: string) {
+  async update(id: number, content: string, img_link: string) {
     return await prisma.post.update({
       where: { id },
-      data: { content, imgLink },
+      data: { content, img_link },
     });
   }
-  async findAll(writerId?: number) {
+  async findAll(writer_id?: number) {
     return await prisma.post.findMany({
-      where: writerId ? { writerId } : undefined,
+      where: writer_id ? { writer_id } : undefined,
     });
   }
   async findOne(id: number) {

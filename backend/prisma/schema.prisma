@@ -13,42 +13,42 @@ model User {
     name String @db.VarChar(30)
     email String @db.VarChar(100)
     password String @db.VarChar(20)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
     Like Like[]
-    ViewDate ViewDate[]
+    View_date View_date[]
     Post Post[]
 }
 
 model Post {
     id Int @id @default(autoincrement())
-    writerId Int
-    replyId Int?
+    writer_id Int
+    reply_id Int?
     content String @db.VarChar(3000)
-    imgLink String? @db.VarChar(1000)
-    viewCnt Int @default(0)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    repliedPost Post[] @relation("Reply")
+    img_link String? @db.VarChar(1000)
+    view_cnt Int @default(0)
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    replied_post Post[] @relation("Reply")
     Like Like[]
-    ViewDate ViewDate[]
-    Writer User @relation(fields:[writerId], references: [id], onDelete:NoAction, onUpdate: NoAction, map:"PostIdfk1")
-    reply Post? @relation("Reply", fields: [replyId], references: [id], onDelete: NoAction,onUpdate: NoAction, map:"PostIdfk2")
+    View_date View_date[]
+    Writer User @relation(fields:[writer_id], references: [id], onDelete:NoAction, onUpdate: NoAction, map:"Post_idfk_1")
+    reply Post? @relation("Reply", fields: [reply_id], references: [id], onDelete: NoAction,onUpdate: NoAction, map:"Post_idfk_2")
 }
 
 model Like {
     id Int @id @default(autoincrement())
-    userId Int
-    postId Int
-    User User @relation(fields: [userId], references:[id], onDelete: NoAction, onUpdate: NoAction, map: "LikeIdfk1")
-    Post Post @relation(fields: [postId], references:[id], onDelete: NoAction, onUpdate: NoAction, map:"LikeIdfk2")
+    user_id Int
+    post_id Int
+    User User @relation(fields: [user_id], references:[id], onDelete: NoAction, onUpdate: NoAction, map: "Like_idfk_1")
+    Post Post @relation(fields: [post_id], references:[id], onDelete: NoAction, onUpdate: NoAction, map:"Like_idfk_2")
 }
 
-model ViewDate{
+model View_date{
     id Int @id @default(autoincrement())
-    lastView DateTime
-    writerId Int
-    postId Int
-    Writer User @relation(fields:[writerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"ViewDateIdfk1")
-    Post Post @relation(fields:[postId], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"ViewDateIdfk2")
+    last_view DateTime
+    writer_id Int
+    post_id Int
+    Writer User @relation(fields:[writer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"View_date_idfk_1")
+    Post Post @relation(fields:[post_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"View_date_idfk_2")
 }

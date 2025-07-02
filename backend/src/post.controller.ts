@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -10,19 +12,23 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { ZodValidationPipe } from './zod/zodValidationPipe';
-import { CreateId, createIdSchema } from './zod/idCheck';
+import { zod_validation_pipe } from './zod/zod_validation_pipe';
+import { Create_id, create_id_schema } from './zod/id_check';
 
 @Controller('/post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('/')
-  @UsePipes(new ZodValidationPipe(createIdSchema))
+  @UsePipes(new zod_validation_pipe(create_id_schema))
+  @HttpCode(HttpStatus.NO_CONTENT)
   async post(
-    @Query('reply') replyId: CreateId,
     @Body() body: { content: string; img?: string },
-  ) {}
+    @Session() session: { user_id: number },
+    @Query('reply') reply_id?: Create_id,
+  ) {
+    this.postService.create(body.content, session.user_id, body.img, reply_id);
+  }
 
   @Get('/all')
   findAll(@Session() session: { user_id: number }) {}

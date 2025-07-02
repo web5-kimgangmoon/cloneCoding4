@@ -3,13 +3,13 @@
 
 export interface Post {
   id: number;
-  writerId: number;
-  replyId?: number;
+  writer_id: number;
+  reply_id?: number;
   content: string;
-  imgLink?: string;
-  viewCnt: number;
-  createdAt: Date;
-  updatedAt: Date;
+  img_link?: string;
+  view_cnt: number;
+  created_at: Date;
+  updated_at: Date;
   // Like: Like[];
   // ViewDate: ViewDate[];
   // repliedPost: Post[];

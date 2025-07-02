@@ -136,3 +136,8 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 2. 필요없는 테이블의 속성 삭제.(스키마 변경)
 3. figma에서 간단한 요소 하나 추가.
 4. zod를 활용한 타입검증 작성중.
+
+### 7/2
+
+1. 카멜 표기법, 스네이크 표기법으로 전부 통일했습니다.
+2. 다소 수정했습니다.

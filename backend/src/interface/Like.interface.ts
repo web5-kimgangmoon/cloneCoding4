@@ -3,8 +3,8 @@ import { User } from './user.interface';
 
 export interface Like {
   id: number;
-  userId: number;
-  postId: number;
+  user_id: number;
+  post_id: number;
   User: User;
   Post: Post;
 }

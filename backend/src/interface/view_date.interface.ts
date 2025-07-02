@@ -3,9 +3,9 @@
 
 export interface ViewDate {
   id: number;
-  lastView: Date;
-  writerId: number;
-  postId: number;
+  last_view: Date;
+  writer_id: number;
+  post_id: number;
   // Writer: User;
   // Post: Post;
 }
