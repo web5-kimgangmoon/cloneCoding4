@@ -141,3 +141,9 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. 카멜 표기법, 스네이크 표기법으로 전부 통일했습니다.
 2. 다소 수정했습니다.
+
+### 7/3
+
+1. guard 적용성공.
+2. swagger 사용을 위해 class-validator 설치.
+3. class-validator와 guard 동작 확인완료.

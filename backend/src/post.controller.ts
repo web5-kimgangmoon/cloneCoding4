@@ -9,29 +9,44 @@ import {
   Post,
   Query,
   Session,
+  UseGuards,
   UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { zod_validation_pipe } from './zod/zod_validation_pipe';
 import { Create_id, create_id_schema } from './zod/id_check';
+import { AuthGuard } from './auth.guard';
+import { Validation_pipe } from './class-validator/validation.pipe';
+import { Reply_id_query } from './class-validator/id_check';
 
 @Controller('/post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('/')
-  @UsePipes(new zod_validation_pipe(create_id_schema))
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(new AuthGuard())
+  @HttpCode(HttpStatus.CREATED)
   async post(
     @Body() body: { content: string; img?: string },
     @Session() session: { user_id: number },
-    @Query('reply') reply_id?: Create_id,
+    @Query() query: Reply_id_query,
   ) {
-    this.postService.create(body.content, session.user_id, body.img, reply_id);
+    await this.postService.create(
+      body.content,
+      session.user_id,
+      body.img,
+      query.reply,
+    );
+    return 'Post is created!';
   }
 
   @Get('/all')
-  findAll(@Session() session: { user_id: number }) {}
+  @HttpCode(HttpStatus.OK)
+  async findAll(@Session() session: { user_id?: number }) {
+    return await this.postService.findAll(session.user_id);
+  }
 
   @Get('/filter')
   getFilter(@Session() session: { user_id: number }) {}

@@ -10,8 +10,8 @@ export class zod_validation_pipe implements PipeTransform {
 
   transform(value: unknown, metadata: ArgumentMetadata) {
     try {
-      const parsedValue = this.schema.parse(value);
-      return parsedValue;
+      const parsed_value = this.schema.parse(value);
+      return parsed_value;
     } catch (error) {
       throw new BadRequestException('비정상적인 값 입력');
     }
