@@ -147,3 +147,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 1. guard 적용성공.
 2. swagger 사용을 위해 class-validator 설치.
 3. class-validator와 guard 동작 확인완료.
+
+### 7/4
+
+1. 소화불량과 더위 때문에 하루 쉬었습니다.
