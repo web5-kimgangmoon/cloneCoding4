@@ -151,3 +151,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ### 7/4
 
 1. 소화불량과 더위 때문에 하루 쉬었습니다.
+
+### 7/5
+
+1. 오늘까지만 쉬겠습니다.
