@@ -19,6 +19,7 @@ import { Create_id, create_id_schema } from './zod/id_check';
 import { AuthGuard } from './auth.guard';
 import { Validation_pipe } from './class-validator/validation.pipe';
 import { Reply_id_query } from './class-validator/id_check';
+import { ApiBody, ApiCreatedResponse } from '@nestjs/swagger';
 
 @Controller('/post')
 export class PostController {
@@ -28,6 +29,21 @@ export class PostController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(new AuthGuard())
   @HttpCode(HttpStatus.CREATED)
+  @ApiCreatedResponse({
+    description: '게시글을 생성합니다.',
+    schema: {
+      type: 'object',
+      properties: { message: { type: 'string', default: 'Post is created' } },
+    },
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+
+      properties: { img: { type: 'string', format: 'binary', nullable: true } },
+    },
+  })
+  // @Api
   async post(
     @Body() body: { content: string; img?: string },
     @Session() session: { user_id: number },

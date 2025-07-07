@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  Session,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('/user')
@@ -6,14 +15,18 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('/')
-  getUser(@Session() session: { user_id: number }) {}
+  async getUser(@Session() session: { user_id: number }) {}
 
   @Get('/filter')
-  search(@Query('name') name: string) {}
+  async search(@Query('name') name: string) {}
 
   @Post('/regist')
-  regist(@Body() body: { email: string; name: string; pwd: string }) {}
+  @HttpCode(HttpStatus.CREATED)
+  async regist(@Body() body: { email: string; name: string; pwd: string }) {
+    await this.userService.create(body.email, body.name, body.pwd);
+    return { message: 'user is created' };
+  }
 
   @Post('/login')
-  login(@Body() body: { id_str: string; pwd: string }) {}
+  async login(@Body() body: { id_str: string; pwd: string }) {}
 }
