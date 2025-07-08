@@ -19,7 +19,16 @@ import { Create_id, create_id_schema } from './zod/id_check';
 import { AuthGuard } from './auth.guard';
 import { Validation_pipe } from './class-validator/validation.pipe';
 import { Reply_id_query } from './class-validator/id_check';
-import { ApiBody, ApiCreatedResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiHeader,
+  ApiOkResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
+import { UserDto } from './dto/user.dto';
 
 @Controller('/post')
 export class PostController {
@@ -29,8 +38,10 @@ export class PostController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(new AuthGuard())
   @HttpCode(HttpStatus.CREATED)
+  //swagger
+  @ApiConsumes('multipart/form-data', 'application/json')
   @ApiCreatedResponse({
-    description: '게시글을 생성합니다.',
+    description: '게시글을 생성합니다. 로그인 인증이 필요합니다.',
     schema: {
       type: 'object',
       properties: { message: { type: 'string', default: 'Post is created' } },
@@ -39,11 +50,32 @@ export class PostController {
   @ApiBody({
     schema: {
       type: 'object',
-
-      properties: { img: { type: 'string', format: 'binary', nullable: true } },
+      properties: {
+        content: {
+          type: 'string',
+          minimum: 1,
+          maximum: 3000,
+          nullable: false,
+        },
+        img: {
+          type: 'string',
+          format: 'binary',
+          nullable: true,
+        },
+      },
     },
   })
-  // @Api
+  @ApiHeader({
+    name: 'session_id',
+    description: '인증을 위한 세션id가 필요합니다.',
+  })
+  @ApiQuery({
+    required: false,
+    name: 'reply',
+    description: 'reply하는 post일 경우, 덧붙일 post의 id를 입력하세요.',
+    type: 'number',
+  })
+  //
   async post(
     @Body() body: { content: string; img?: string },
     @Session() session: { user_id: number },
@@ -60,6 +92,15 @@ export class PostController {
 
   @Get('/all')
   @HttpCode(HttpStatus.OK)
+  //swagger
+  @ApiOkResponse({
+    description: '모든 게시글을 보여줍니다.',
+    type: UserDto,
+  })
+  @ApiHeader({
+    name: 'session_id',
+    description: '인증을 위한 세션id가 필요합니다.',
+  })
   async findAll(@Session() session: { user_id?: number }) {
     return await this.postService.findAll(session.user_id);
   }

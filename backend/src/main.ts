@@ -15,7 +15,6 @@ async function bootstrap() {
     .setTitle('board api')
     .setDescription('클론코딩 게시글의 api 문서입니다')
     .setVersion('1.0')
-    .addTag('board')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api_document', app, documentFactory);

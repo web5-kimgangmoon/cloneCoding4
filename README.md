@@ -156,6 +156,11 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. 오늘까지만 쉬겠습니다.
 
-### 7/6
+### 7/7
 
 1. swagger 연결. swagger로 api 문서 관리 시작.
+
+### 7/8
+
+1. README 7/6=> 7/7로 날짜 수정.
+2. swagger 적용을 DTO와 관련지어 익혔습니다.
