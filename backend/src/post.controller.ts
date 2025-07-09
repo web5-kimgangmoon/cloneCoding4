@@ -14,21 +14,17 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { zod_validation_pipe } from './zod/zod_validation_pipe';
-import { Create_id, create_id_schema } from './zod/id_check';
 import { AuthGuard } from './auth.guard';
-import { Validation_pipe } from './class-validator/validation.pipe';
 import { Reply_id_query } from './class-validator/id_check';
 import {
   ApiBody,
   ApiConsumes,
-  ApiCookieAuth,
   ApiCreatedResponse,
   ApiHeader,
   ApiOkResponse,
   ApiQuery,
 } from '@nestjs/swagger';
-import { UserDto } from './dto/user.dto';
+import { PostDto, PostsDto } from './dto/post.dto';
 
 @Controller('/post')
 export class PostController {
@@ -95,14 +91,16 @@ export class PostController {
   //swagger
   @ApiOkResponse({
     description: '모든 게시글을 보여줍니다.',
-    type: UserDto,
+    type: () => PostsDto,
   })
   @ApiHeader({
     name: 'session_id',
     description: '인증을 위한 세션id가 필요합니다.',
   })
-  async findAll(@Session() session: { user_id?: number }) {
-    return await this.postService.findAll(session.user_id);
+  async findAll(
+    @Session() session: { user_id?: number },
+  ): Promise<{ posts: PostDto[] }> {
+    return { posts: await this.postService.findAll(session.user_id) };
   }
 
   @Get('/filter')

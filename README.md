@@ -164,3 +164,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. README 7/6=> 7/7로 날짜 수정.
 2. swagger 적용을 DTO와 관련지어 익혔습니다.
+
+### 7/9
+
+1. swagger 공부.

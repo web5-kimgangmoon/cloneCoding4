@@ -19,10 +19,10 @@ export class UserDto implements User {
   })
   password: string;
 
-  @ApiProperty({ name: 'created_at', type: 'string', format: 'Date' })
+  @ApiProperty({ name: 'created_at', type: 'string', format: 'date-time' })
   created_at: Date;
 
-  @ApiProperty({ name: 'updated_at', type: 'string', format: 'Date' })
+  @ApiProperty({ name: 'updated_at', type: 'string', format: 'date-time' })
   updated_at: Date;
 
   // Like: Like[];
