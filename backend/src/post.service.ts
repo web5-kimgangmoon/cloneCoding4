@@ -20,8 +20,19 @@ export class PostService {
     });
   }
   async findAll(writer_id?: number) {
+    // gpt
+    await prisma.$queryRaw`
+  SELECT p2.*
+  FROM Post p1
+  JOIN Post p2 ON p2.reply_id = p1.id
+  WHERE p1.writer_id = ${writer_id}
+    AND NOT EXISTS (
+      SELECT 1 FROM View_date vd WHERE vd.post_id = p2.id
+    )
+`;
+
     return await prisma.post.findMany({
-      where: writer_id ? { writer_id } : undefined,
+      where: writer_id ? { writer_id, View_date: { none: {} } } : undefined,
     });
   }
   async findOne(id: number) {

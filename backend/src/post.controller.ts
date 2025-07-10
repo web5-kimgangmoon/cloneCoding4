@@ -93,18 +93,43 @@ export class PostController {
     description: '모든 게시글을 보여줍니다.',
     type: () => PostsDto,
   })
-  @ApiHeader({
-    name: 'session_id',
-    description: '인증을 위한 세션id가 필요합니다.',
-  })
-  async findAll(
-    @Session() session: { user_id?: number },
-  ): Promise<{ posts: PostDto[] }> {
-    return { posts: await this.postService.findAll(session.user_id) };
+  async findAll(): Promise<{ posts: PostDto[] }> {
+    return { posts: await this.postService.findAll() };
   }
 
   @Get('/filter')
-  getFilter(@Session() session: { user_id: number }) {}
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(new AuthGuard())
+  @ApiOkResponse({
+    description: '자신의 게시글과 관련된 정보들을 보여줍니다.',
+  })
+  @ApiHeader({
+    name: 'session_id',
+    description: '인증을 위한 세션id가 필요합니다.',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'type',
+    type: 'string',
+    example: ['own', 'notification'],
+    default: 'own',
+    description:
+      '자신이 쓴 글(own) 혹은, 자신이 쓴 기존의 글에 타인이 새롭게 단 댓글(notification)을 불러옵니다.',
+  })
+  @ApiQuery({
+    name: 'list',
+    type: 'string',
+    example: ['posts', 'replies', 'likes'],
+    description:
+      'own일 경우, posts와 replies는 자신의 게시글과 댓글이며 likes는 자신이 추천한 게시글입니다. notification의 경우, posts는 자신의 게시글에 단 타인의 댓글을 replies는 자신의 댓글에 단 타인의 댓글을 불러오고 likes는 존재하지 않습니다.',
+    default: 'posts',
+  })
+  async getFilter(
+    @Session() session: { user_id: number },
+    @Query() query: { type: string; list: string },
+  ) {
+    return { posts: await this.postService.findAll(session.user_id) };
+  }
 
   @Get('/:post_id')
   findOne(@Param('post_id') id: string) {}
