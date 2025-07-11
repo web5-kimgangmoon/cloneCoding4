@@ -173,3 +173,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. 스프레드 시트 파일 삭제합니다. api 문서는 /api_document 경로에 있습니다.
 2. raw query 추가 및 공부중.
+
+### 7/11
+
+1. 새로운 서비스 추가.(filter)

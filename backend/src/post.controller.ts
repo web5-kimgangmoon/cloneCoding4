@@ -25,6 +25,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { PostDto, PostsDto } from './dto/post.dto';
+import { filer_query } from './class-validator/filter_check';
 
 @Controller('/post')
 export class PostController {
@@ -75,13 +76,13 @@ export class PostController {
   async post(
     @Body() body: { content: string; img?: string },
     @Session() session: { user_id: number },
-    @Query() query: Reply_id_query,
+    @Query() query?: { reply: number },
   ) {
     await this.postService.create(
       body.content,
       session.user_id,
       body.img,
-      query.reply,
+      query?.reply,
     );
     return 'Post is created!';
   }
@@ -126,9 +127,15 @@ export class PostController {
   })
   async getFilter(
     @Session() session: { user_id: number },
-    @Query() query: { type: string; list: string },
+    @Query() query: filer_query,
   ) {
-    return { posts: await this.postService.findAll(session.user_id) };
+    return {
+      posts: await this.postService.filter(
+        query.type,
+        query.list,
+        session.user_id,
+      ),
+    };
   }
 
   @Get('/:post_id')
