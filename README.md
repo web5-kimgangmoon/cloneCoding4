@@ -177,3 +177,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ### 7/11
 
 1. 새로운 서비스 추가.(filter)
+
+### 7/12
+
+1. 쉬었습니다. 죄송합니다.
