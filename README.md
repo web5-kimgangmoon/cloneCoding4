@@ -185,3 +185,8 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ### 7/13
 
 1. 쉬었습니다. 죄송합니다.
+
+### 7/14
+
+1. swagger 정리 및 간단한 로직 완성.
+2. 세부조건 작성 필요.(예를 들어, 이름에 한글만 허용 혹은 영어만 허용. 이메일 형식 맞추는 조건 class-validator로 필요)

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Like } from '@prisma/client';
 
-export class LikeDto implements Like {
+export class Like_dto implements Like {
   @ApiProperty({ name: 'id', type: 'number', minimum: 1 })
   id: number;
 

@@ -1,8 +1,6 @@
 import {
   CanActivate,
   ExecutionContext,
-  HttpCode,
-  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -24,5 +22,21 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     return validateRequest(request);
+  }
+}
+
+const validateRequest_reverse = (request: any) => {
+  if (typeof request.session.user_id)
+    throw new UnauthorizedException('이미 로그인 상태입니다.');
+  else return true;
+};
+
+@Injectable()
+export class AuthGuard_reverse implements CanActivate {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest();
+    return validateRequest_reverse(request);
   }
 }

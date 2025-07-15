@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Post } from '@prisma/client';
 
-export class PostDto implements Post {
+export class Post_dto implements Post {
   @ApiProperty({ name: 'id', type: 'number', minimum: 1 })
   id: number;
 
@@ -42,7 +42,15 @@ export class PostDto implements Post {
   //   repliedPost: Post[];
 }
 
-export class PostsDto {
-  @ApiProperty({ type: () => [PostsDto] })
-  posts: PostsDto[];
+export class Posts_dto {
+  @ApiProperty({ type: () => [Post_dto] })
+  posts: Post_dto[];
+}
+
+export class Post_all_dto {
+  @ApiProperty({ type: () => Post_dto })
+  target: Post_dto[];
+
+  @ApiProperty({ type: () => [Post_dto] })
+  repliedPost: Post_dto[];
 }

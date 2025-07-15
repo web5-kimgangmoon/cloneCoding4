@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
-export class UserDto implements User {
+export class User_dto implements User {
   @ApiProperty({ name: 'id', type: 'number', minimum: 1 })
   id: number;
 
@@ -28,4 +28,9 @@ export class UserDto implements User {
   // Like: Like[];
   // ViewDate: ViewDate[];
   // Post: Post[];
+}
+
+export class Users_dto {
+  @ApiProperty({ type: () => [User_dto] })
+  users: User_dto[];
 }

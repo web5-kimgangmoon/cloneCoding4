@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { prisma } from './main';
 
 @Injectable()
@@ -13,14 +17,44 @@ export class PostService {
       data: { content, img_link, writer_id, reply_id },
     });
   }
-  async update(id: number, content: string, img_link: string) {
-    return await prisma.post.update({
+  async update(
+    id: number,
+    user_id: number,
+    content: string,
+    img_link?: string,
+  ) {
+    const target = await prisma.post.findFirst({
       where: { id },
-      data: { content, img_link },
+    });
+    if (target === null)
+      throw new NotFoundException('해당 게시글이 존재하지 않습니다.');
+    if (target.writer_id !== user_id)
+      throw new UnauthorizedException('해당 게시글의 작성자가 아닙니다.');
+
+    // 구조분해 연산자 이용.
+    await prisma.post.update({
+      where: { id },
+      data: { content, ...(img_link ? { img_link } : {}) },
     });
   }
+  async like(post_id: number, user_id: number) {
+    let result: boolean = false;
+    const target = await prisma.like.findFirst({
+      where: { AND: { post_id, user_id } },
+    });
+    if (target) {
+      await prisma.like.delete({
+        where: { id: target.id },
+      });
+      result = false;
+    } else {
+      await prisma.like.create({ data: { post_id, user_id } });
+      result = true;
+    }
+    return result;
+  }
   async findAll() {
-    return await prisma.post.findMany();
+    return await prisma.post.findMany({ where: { reply_id: null } });
   }
   async filter(
     type: 'own' | 'notification',
@@ -83,7 +117,10 @@ export class PostService {
     }
   }
   async findOne(id: number) {
-    return await prisma.post.findUnique({ where: { id } });
+    return await prisma.post.findUnique({
+      where: { id, reply_id: null },
+      include: { replied_post: {} },
+    });
   }
   async deletePost(id: number) {
     return await prisma.post.delete({ where: { id } });

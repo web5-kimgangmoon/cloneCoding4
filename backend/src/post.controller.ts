@@ -15,17 +15,22 @@ import {
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { AuthGuard } from './auth.guard';
-import { Reply_id_query } from './class-validator/id_check';
 import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
   ApiHeader,
   ApiOkResponse,
+  ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { PostDto, PostsDto } from './dto/post.dto';
-import { filer_query } from './class-validator/filter_check';
+import { Post_all_dto, Post_dto, Posts_dto } from './dto/post.dto';
+import {
+  Post_body,
+  Post_create_query,
+  Post_filer_query,
+  Post_param_postId,
+} from './class-validator/post.check';
 
 @Controller('/post')
 export class PostController {
@@ -65,6 +70,7 @@ export class PostController {
   @ApiHeader({
     name: 'session_id',
     description: '인증을 위한 세션id가 필요합니다.',
+    required: true,
   })
   @ApiQuery({
     required: false,
@@ -72,15 +78,16 @@ export class PostController {
     description: 'reply하는 post일 경우, 덧붙일 post의 id를 입력하세요.',
     type: 'number',
   })
-  //
   async post(
-    @Body() body: { content: string; img?: string },
+    @Body()
+    body: Post_body,
     @Session() session: { user_id: number },
-    @Query() query?: { reply: number },
+    @Query() query?: Post_create_query,
   ) {
     await this.postService.create(
       body.content,
-      session.user_id,
+      // session.user_id,
+      session.user_id, // 테스트
       body.img,
       query?.reply,
     );
@@ -92,9 +99,9 @@ export class PostController {
   //swagger
   @ApiOkResponse({
     description: '모든 게시글을 보여줍니다.',
-    type: () => PostsDto,
+    type: () => Posts_dto,
   })
-  async findAll(): Promise<{ posts: PostDto[] }> {
+  async findAll(): Promise<{ posts: Post_dto[] }> {
     return { posts: await this.postService.findAll() };
   }
 
@@ -103,11 +110,12 @@ export class PostController {
   @UseGuards(new AuthGuard())
   @ApiOkResponse({
     description: '자신의 게시글과 관련된 정보들을 보여줍니다.',
+    type: () => Posts_dto,
   })
   @ApiHeader({
     name: 'session_id',
     description: '인증을 위한 세션id가 필요합니다.',
-    required: false,
+    required: true,
   })
   @ApiQuery({
     name: 'type',
@@ -127,7 +135,7 @@ export class PostController {
   })
   async getFilter(
     @Session() session: { user_id: number },
-    @Query() query: filer_query,
+    @Query() query: Post_filer_query,
   ) {
     return {
       posts: await this.postService.filter(
@@ -139,11 +147,105 @@ export class PostController {
   }
 
   @Get('/:post_id')
-  findOne(@Param('post_id') id: string) {}
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  // swagger
+  @ApiOkResponse({
+    description: '특정 게시글을 댓글 목록들을 포함하여 전체를 확인합니다.',
+    type: () => Post_all_dto,
+  })
+  @ApiParam({
+    description:
+      '포스트의 id를 입력하세요. 댓글이 아닌 포스트의 id가 필요합니다.',
+    type: 'number',
+    name: 'post_id',
+  })
+  async findOne(@Param() params: Post_param_postId) {
+    return await this.postService.findOne(params.post_id);
+  }
 
-  @Patch('/:post_id/like')
-  clickLike(
+  @Get('/:post_id/like')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(new AuthGuard())
+  // swagger
+  @ApiHeader({
+    name: 'session_id',
+    description: '인증을 위한 세션id가 필요합니다.',
+    required: true,
+  })
+  @ApiParam({
+    description:
+      '포스트의 id를 입력하세요. 댓글이 아닌 포스트의 id가 필요합니다.',
+    type: 'number',
+    name: 'post_id',
+  })
+  @ApiOkResponse({
+    description: '해당 게시글을 추천합니다. 로그인 인증이 필요합니다.',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', default: `추천 작업이 완료됐습니다.` },
+        like: { type: 'boolean' },
+      },
+    },
+  })
+  async clickLike(
     @Session() session: { user_id: number },
-    @Param('post_id') id: string,
-  ) {}
+    @Param() params: Post_param_postId,
+  ) {
+    const result = await this.postService.like(params.post_id, session.user_id);
+    return { message: `추천 작업이 완료됐습니다.`, like: result };
+  }
+
+  @Patch('/:post_id')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(new AuthGuard())
+  // swagger
+  @ApiHeader({
+    name: 'session_id',
+    description: '인증을 위한 세션id가 필요합니다.',
+    required: true,
+  })
+  @ApiParam({
+    description:
+      '포스트의 id를 입력하세요. 댓글이 아닌 포스트의 id가 필요합니다.',
+    type: 'number',
+    name: 'post_id',
+  })
+  @ApiOkResponse({
+    description: '해당 게시글을 수정합니다. 로그인 인증이 필요합니다.',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', default: `게시글 수정이 완료됐습니다.` },
+        like: { type: 'boolean' },
+      },
+    },
+  })
+  @ApiBody({
+    description: '수정하기 위한 이미지 파일과 텍스트가 필요합니다.',
+    schema: {
+      type: 'object',
+      properties: {
+        content: { type: 'string', nullable: false },
+        img: { type: 'string', format: 'binary', nullable: true },
+      },
+    },
+  })
+  async edit(
+    @Body()
+    body: Post_body,
+    @Session() session: { user_id: number },
+    @Param() params: Post_param_postId,
+  ) {
+    await this.postService.update(
+      params.post_id,
+      session.user_id,
+      body.content,
+      body.img,
+    );
+    return { message: `게시글 수정이 완료됐습니다.` };
+  }
 }
