@@ -4,8 +4,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
   Post,
   Query,
+  Req,
+  Res,
   Session,
   UseGuards,
   UsePipes,
@@ -20,6 +23,7 @@ import {
   User_login_body,
   User_regist_body,
 } from './class-validator/user.check';
+import { Request, Response } from 'express';
 
 @Controller('/user')
 export class UserController {
@@ -38,8 +42,8 @@ export class UserController {
     description: '자신(유저)의 정보를 받아옵니다.',
     type: () => User_dto,
   })
-  async getUser(@Session() session: { user_id: number }) {
-    return this.userService.findOne(session.user_id);
+  async getUser(@Session() session: { session_id: number }) {
+    return this.userService.findOne(session.session_id);
   }
 
   @Get('/filter')
@@ -54,7 +58,6 @@ export class UserController {
   async search(@Query() { name }: User_filter_query) {
     return this.userService.findAll(name);
   }
-
   @Post('/regist')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe())
@@ -91,6 +94,11 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(new AuthGuard_reverse())
   // swagger
+  @ApiHeader({
+    name: 'session_id',
+    description: '인증을 위한 세션id가 필요합니다.',
+    required: true,
+  })
   @ApiOkResponse({
     description: '해당 정보로 로그인을 합니다.',
     schema: {
@@ -118,5 +126,28 @@ export class UserController {
     const user = await this.userService.login(body.id_str, body.pwd);
     session.session_id = user.id;
     return { message: 'user is logined' };
+  }
+
+  @Get('/logout')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(new AuthGuard())
+  // swagger
+  @ApiHeader({
+    name: 'session_id',
+    description: '인증을 위한 세션id가 필요합니다.',
+    required: true,
+  })
+  @ApiOkResponse({
+    description: '스스로를 로그아웃합니다.',
+    schema: {
+      type: 'object',
+      properties: { message: { type: 'string', default: 'user is logouted.' } },
+    },
+  })
+  async logout(@Req() req: Request, @Res() res: Response) {
+    req.session.destroy((err) => {
+      if (err) throw new InternalServerErrorException('logut is failed.');
+      else res.status(200).send({ message: 'user is logouted' });
+    });
   }
 }

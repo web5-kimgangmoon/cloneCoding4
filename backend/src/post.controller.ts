@@ -9,7 +9,9 @@ import {
   Post,
   Query,
   Session,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -31,12 +33,19 @@ import {
   Post_filer_query,
   Post_param_postId,
 } from './class-validator/post.check';
+import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('/post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Post('/')
+  @UseInterceptors(
+    FileInterceptor('img', {
+      dest: './imgs',
+      limits: { fileSize: 1024 ^ 2 },
+    }),
+  )
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(new AuthGuard())
   @HttpCode(HttpStatus.CREATED)
@@ -63,6 +72,7 @@ export class PostController {
           type: 'string',
           format: 'binary',
           nullable: true,
+          description: '1mb 제한이 있습니다.',
         },
       },
     },
@@ -82,13 +92,13 @@ export class PostController {
     @Body()
     body: Post_body,
     @Session() session: { user_id: number },
+    @UploadedFile() file?: Express.Multer.File,
     @Query() query?: Post_create_query,
   ) {
     await this.postService.create(
       body.content,
-      // session.user_id,
-      session.user_id, // 테스트
-      body.img,
+      session.user_id,
+      file?.filename,
       query?.reply,
     );
     return 'Post is created!';
@@ -201,8 +211,15 @@ export class PostController {
   @Patch('/:post_id')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
+  @UseInterceptors(
+    FileInterceptor('img', {
+      dest: './imgs',
+      limits: { fileSize: 1024 ^ 2 },
+    }),
+  )
   @UseGuards(new AuthGuard())
   // swagger
+  @ApiConsumes('multipart/form-data', 'application/json')
   @ApiHeader({
     name: 'session_id',
     description: '인증을 위한 세션id가 필요합니다.',
@@ -239,12 +256,13 @@ export class PostController {
     body: Post_body,
     @Session() session: { user_id: number },
     @Param() params: Post_param_postId,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
     await this.postService.update(
       params.post_id,
       session.user_id,
       body.content,
-      body.img,
+      file?.filename,
     );
     return { message: `게시글 수정이 완료됐습니다.` };
   }

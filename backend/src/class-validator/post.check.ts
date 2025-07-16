@@ -22,10 +22,10 @@ export class Post_body {
   @MinLength(1)
   content: string;
 
-  @IsString()
-  @MinLength(1)
-  @MaxLength(1000)
-  img?: string;
+  // @IsString()
+  // @MinLength(1)
+  // @MaxLength(1000)
+  // img?: string;
 
   // @IsInt()
   // id: number; // 테스트

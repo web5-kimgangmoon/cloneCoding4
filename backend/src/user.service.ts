@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { prisma } from './main';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -10,7 +11,14 @@ export class UserService {
       throw new BadRequestException(
         '해당 이메일을 가진 유저가 이미 존재합니다.',
       );
-    return await prisma.user.create({ data: { email, name, password } });
+
+    const hash_algorithm = crypto.createHash('sha256');
+
+    const hashing = hash_algorithm.update(password + 'salt');
+    const encrypted_password = hashing.digest('hex');
+    return await prisma.user.create({
+      data: { email, name, password: encrypted_password },
+    });
   }
   async findOne(id: number) {
     return await prisma.user.findUnique({ where: { id } });
@@ -21,8 +29,15 @@ export class UserService {
     });
   }
   async login(id_str: string, password: string) {
+    const hash_algorithm = crypto.createHash('sha256');
+    const hashing = hash_algorithm.update(password + 'salt');
+    const encrypted_password = hashing.digest('hex');
+
     const user = await prisma.user.findFirst({
-      where: { OR: [{ name: id_str }, { email: id_str }], password },
+      where: {
+        OR: [{ name: id_str }, { email: id_str }],
+        password: encrypted_password,
+      },
     });
     if (user === null)
       throw new BadRequestException('해당 유저는 존재하지 않습니다.');

@@ -190,3 +190,9 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. swagger 정리 및 간단한 로직 완성.
 2. 세부조건 작성 필요.(예를 들어, 이름에 한글만 허용 혹은 영어만 허용. 이메일 형식 맞추는 조건 class-validator로 필요)
+
+### 7/15
+
+1. user모듈측의 로직 오류수정 및 정상동작 확인.
+2. image 파일을 받을 수 있도록 로직수정 및 multer interceptor 추가 완료.
+3. 내일 테스트 필요.
