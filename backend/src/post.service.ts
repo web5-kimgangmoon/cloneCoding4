@@ -1,12 +1,15 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { prisma } from './main';
+import { basename, extname } from 'path';
+import { unlink } from 'fs';
 
 @Injectable()
-export class PostService {
+export class Post_service {
   async create(
     content: string,
     writer_id: number,
@@ -30,7 +33,15 @@ export class PostService {
       throw new NotFoundException('해당 게시글이 존재하지 않습니다.');
     if (target.writer_id !== user_id)
       throw new UnauthorizedException('해당 게시글의 작성자가 아닙니다.');
-
+    if (img_link && target.img_link !== null && img_link !== target.img_link) {
+      unlink(
+        './imgs/' + basename(target.img_link, extname(target.img_link)),
+        (err) => {
+          if (err !== null)
+            console.error('image deleting is failed, detailed error:\n', err);
+        },
+      );
+    }
     // 구조분해 연산자 이용.
     await prisma.post.update({
       where: { id },
@@ -122,7 +133,21 @@ export class PostService {
       include: { replied_post: {} },
     });
   }
-  async deletePost(id: number) {
+  async deletePost(id: number, user_id: number) {
+    const target = await prisma.post.findFirst({ where: { id } });
+    if (target === null)
+      throw new BadRequestException('that post does not exists.');
+    if (target.writer_id !== user_id)
+      throw new UnauthorizedException("you don't have authority.");
+    if (target.img_link) {
+      unlink(
+        './imgs/' + basename(target.img_link, extname(target.img_link)),
+        (err) => {
+          if (err !== null)
+            console.error('image deleting is failed, detailed error:\n', err);
+        },
+      );
+    }
     return await prisma.post.delete({ where: { id } });
   }
 }

@@ -1,10 +1,15 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Delete,
+  FileTypeValidator,
   Get,
   HttpCode,
   HttpStatus,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Patch,
   Post,
   Query,
@@ -15,7 +20,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { PostService } from './post.service';
+import { Post_service } from './post.service';
 import { AuthGuard } from './auth.guard';
 import {
   ApiBody,
@@ -33,17 +38,28 @@ import {
   Post_filer_query,
   Post_param_postId,
 } from './class-validator/post.check';
-import { FileInterceptor, NoFilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { extname } from 'path';
 
 @Controller('/post')
-export class PostController {
-  constructor(private readonly postService: PostService) {}
+export class Post_controller {
+  constructor(private readonly post_service: Post_service) {}
 
   @Post('/')
   @UseInterceptors(
     FileInterceptor('img', {
       dest: './imgs',
-      limits: { fileSize: 1024 ^ 2 },
+      limits: { fileSize: 1024 ** 2 },
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/^image\//))
+          cb(
+            new BadRequestException(
+              'invalid file. please confirm your file type.',
+            ),
+            false,
+          );
+        else cb(null, true);
+      },
     }),
   )
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -91,14 +107,17 @@ export class PostController {
   async post(
     @Body()
     body: Post_body,
-    @Session() session: { user_id: number },
-    @UploadedFile() file?: Express.Multer.File,
+    @Session() session: { session_id: number },
+    @UploadedFile()
+    file?: Express.Multer.File,
     @Query() query?: Post_create_query,
   ) {
-    await this.postService.create(
+    await this.post_service.create(
       body.content,
-      session.user_id,
-      file?.filename,
+      session.session_id,
+      file
+        ? file.filename + extname(file.originalname).toLowerCase()
+        : undefined,
       query?.reply,
     );
     return 'Post is created!';
@@ -112,7 +131,7 @@ export class PostController {
     type: () => Posts_dto,
   })
   async findAll(): Promise<{ posts: Post_dto[] }> {
-    return { posts: await this.postService.findAll() };
+    return { posts: await this.post_service.findAll() };
   }
 
   @Get('/filter')
@@ -144,14 +163,14 @@ export class PostController {
     default: 'posts',
   })
   async getFilter(
-    @Session() session: { user_id: number },
+    @Session() session: { session_id: number },
     @Query() query: Post_filer_query,
   ) {
     return {
-      posts: await this.postService.filter(
+      posts: await this.post_service.filter(
         query.type,
         query.list,
-        session.user_id,
+        session.session_id,
       ),
     };
   }
@@ -171,7 +190,7 @@ export class PostController {
     name: 'post_id',
   })
   async findOne(@Param() params: Post_param_postId) {
-    return await this.postService.findOne(params.post_id);
+    return await this.post_service.findOne(params.post_id);
   }
 
   @Get('/:post_id/like')
@@ -185,8 +204,7 @@ export class PostController {
     required: true,
   })
   @ApiParam({
-    description:
-      '포스트의 id를 입력하세요. 댓글이 아닌 포스트의 id가 필요합니다.',
+    description: '포스트의 id를 입력하세요.',
     type: 'number',
     name: 'post_id',
   })
@@ -201,10 +219,13 @@ export class PostController {
     },
   })
   async clickLike(
-    @Session() session: { user_id: number },
+    @Session() session: { session_id: number },
     @Param() params: Post_param_postId,
   ) {
-    const result = await this.postService.like(params.post_id, session.user_id);
+    const result = await this.post_service.like(
+      params.post_id,
+      session.session_id,
+    );
     return { message: `추천 작업이 완료됐습니다.`, like: result };
   }
 
@@ -214,7 +235,17 @@ export class PostController {
   @UseInterceptors(
     FileInterceptor('img', {
       dest: './imgs',
-      limits: { fileSize: 1024 ^ 2 },
+      limits: { fileSize: 1024 ** 2 },
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/^image\//))
+          cb(
+            new BadRequestException(
+              'invalid file. please confirm your file type.',
+            ),
+            false,
+          );
+        else cb(null, true);
+      },
     }),
   )
   @UseGuards(new AuthGuard())
@@ -226,8 +257,7 @@ export class PostController {
     required: true,
   })
   @ApiParam({
-    description:
-      '포스트의 id를 입력하세요. 댓글이 아닌 포스트의 id가 필요합니다.',
+    description: '포스트의 id를 입력하세요.',
     type: 'number',
     name: 'post_id',
   })
@@ -237,7 +267,6 @@ export class PostController {
       type: 'object',
       properties: {
         message: { type: 'string', default: `게시글 수정이 완료됐습니다.` },
-        like: { type: 'boolean' },
       },
     },
   })
@@ -254,16 +283,51 @@ export class PostController {
   async edit(
     @Body()
     body: Post_body,
-    @Session() session: { user_id: number },
+    @Session() session: { session_id: number },
     @Param() params: Post_param_postId,
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFile()
+    file?: Express.Multer.File,
   ) {
-    await this.postService.update(
+    await this.post_service.update(
       params.post_id,
-      session.user_id,
+      session.session_id,
       body.content,
-      file?.filename,
+      file
+        ? file.filename + extname(file.originalname).toLowerCase()
+        : undefined,
     );
     return { message: `게시글 수정이 완료됐습니다.` };
+  }
+
+  @Delete('/:post_id')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(new AuthGuard())
+  // swagger
+  @ApiHeader({
+    name: 'session_id',
+    description: '인증을 위한 세션id가 필요합니다.',
+    required: true,
+  })
+  @ApiParam({
+    description: '포스트의 id를 입력하세요.',
+    type: 'number',
+    name: 'post_id',
+  })
+  @ApiOkResponse({
+    description: '해당 게시글을 삭제합니다. 로그인 인증이 필요합니다.',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', default: `게시글 삭제가 완료됐습니다.` },
+      },
+    },
+  })
+  async delete_post(
+    @Session() session: { session_id: number },
+    @Param() params: Post_param_postId,
+  ) {
+    await this.post_service.deletePost(params.post_id, session.session_id);
+    return { message: `게시글 삭제가 완료됐습니다.` };
   }
 }

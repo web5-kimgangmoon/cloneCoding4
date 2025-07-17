@@ -26,6 +26,7 @@ async function bootstrap() {
     user: 'session_manager',
     password: '1234',
     database: 'session_list',
+    expiration: 1000 * 60 * 30,
   });
   app.use(
     session({

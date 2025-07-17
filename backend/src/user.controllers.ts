@@ -14,7 +14,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { User_service } from './user.service';
 import { AuthGuard, AuthGuard_reverse } from './auth.guard';
 import { ApiBody, ApiHeader, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { User_dto, Users_dto } from './dto/user.dto';
@@ -26,8 +26,8 @@ import {
 import { Request, Response } from 'express';
 
 @Controller('/user')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+export class User_controller {
+  constructor(private readonly user_service: User_service) {}
 
   @Get('/')
   @HttpCode(HttpStatus.OK)
@@ -43,7 +43,7 @@ export class UserController {
     type: () => User_dto,
   })
   async getUser(@Session() session: { session_id: number }) {
-    return this.userService.findOne(session.session_id);
+    return this.user_service.findOne(session.session_id);
   }
 
   @Get('/filter')
@@ -56,7 +56,7 @@ export class UserController {
   })
   @ApiQuery({ name: 'name', type: 'string' })
   async search(@Query() { name }: User_filter_query) {
-    return this.userService.findAll(name);
+    return this.user_service.findAll(name);
   }
   @Post('/regist')
   @HttpCode(HttpStatus.CREATED)
@@ -86,7 +86,7 @@ export class UserController {
     },
   })
   async regist(@Body() body: User_regist_body) {
-    await this.userService.create(body.email, body.name, body.pwd);
+    await this.user_service.create(body.email, body.name, body.pwd);
     return { message: 'user is created' };
   }
 
@@ -123,7 +123,7 @@ export class UserController {
     @Body() body: User_login_body,
     @Session() session: { session_id: number },
   ) {
-    const user = await this.userService.login(body.id_str, body.pwd);
+    const user = await this.user_service.login(body.id_str, body.pwd);
     session.session_id = user.id;
     return { message: 'user is logined' };
   }

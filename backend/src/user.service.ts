@@ -3,7 +3,7 @@ import { prisma } from './main';
 import * as crypto from 'crypto';
 
 @Injectable()
-export class UserService {
+export class User_service {
   async create(email: string, name: string, password: string) {
     if ((await prisma.user.findFirst({ where: { name } })) !== null)
       throw new BadRequestException('해당 이름을 가진 유저가 이미 존재합니다.');
