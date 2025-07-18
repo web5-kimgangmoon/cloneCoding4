@@ -8,7 +8,13 @@ export class User_dto implements User {
   @ApiProperty({ name: 'name', type: 'string', minLength: 1, maxLength: 30 })
   name: string;
 
-  @ApiProperty({ name: 'email', type: 'string', minLength: 1, maxLength: 100 })
+  @ApiProperty({
+    name: 'email',
+    type: 'string',
+    minLength: 1,
+    maxLength: 100,
+    format: 'email',
+  })
   email: string;
 
   @ApiProperty({

@@ -1,4 +1,4 @@
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class User_filter_query {
   @IsString()
@@ -9,6 +9,7 @@ export class User_regist_body {
   @IsString()
   @MinLength(1)
   @MaxLength(100)
+  @IsEmail()
   email: string;
 
   @IsString()

@@ -128,10 +128,19 @@ export class Post_service {
     }
   }
   async findOne(id: number) {
-    return await prisma.post.findUnique({
+    const target = await prisma.post.findFirst({
       where: { id, reply_id: null },
       include: { replied_post: {} },
     });
+    if (target === null)
+      throw new BadRequestException('The post does not exists.');
+
+    const updated = await prisma.post.update({
+      data: { view_cnt: { increment: 1 } },
+      where: { id },
+      include: { replied_post: {} },
+    });
+    return updated;
   }
   async deletePost(id: number, user_id: number) {
     const target = await prisma.post.findFirst({ where: { id } });
