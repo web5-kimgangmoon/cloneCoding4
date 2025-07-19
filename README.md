@@ -217,3 +217,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 #### 완료된 작업
 
 3. 조회수가 늘어나는 로직이 필요합니다. (완료)
+
+### 7/19
+
+1. 쉬었습니다 죄송합니다.
