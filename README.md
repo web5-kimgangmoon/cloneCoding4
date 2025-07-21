@@ -212,7 +212,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 #### 추가 필요
 
 1. 현재 all, filter, like, 포스트 patch의 동작을 확인이 필요합니다.
-2. 세부조건 작성 필요합니다.(예를 들어, 이름에 한글만 허용 혹은 영어만 허용. 이메일 형식 맞추는 조건 class-validator로 필요)(일부완료)
+2. 세부조건 작성 필요합니다.(예를 들어, 이름에 한글만 허용 혹은 영어만 허용. 이메일 형식 맞추는 조건 class-validator로 필요)
 
 #### 완료된 작업
 
@@ -221,3 +221,16 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 ### 7/19
 
 1. 쉬었습니다 죄송합니다.
+
+### 7/20
+
+1. 잘못된 로직 수정 및 쿼리문 수정중.
+
+#### 추가 필요
+
+1. 현재 all, filter, like, 포스트 patch의 동작을 확인이 필요합니다.(like 완료, patch 체크 완료, filter 수정 진행중(다중 조인 문으로 수정 필요))
+2. 세부조건 작성 필요합니다.(예를 들어, 이름에 한글만 허용 혹은 영어만 허용. 이메일 형식 맞추는 조건 class-validator로 필요)(일부완료)
+
+#### 완료된 작업
+
+3. 조회수가 늘어나는 로직이 필요합니다. (완료)

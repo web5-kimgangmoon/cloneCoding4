@@ -128,7 +128,7 @@ export class User_controller {
     return { message: 'user is logined' };
   }
 
-  @Get('/logout')
+  @Post('/logout')
   @HttpCode(HttpStatus.OK)
   @UseGuards(new AuthGuard())
   // swagger

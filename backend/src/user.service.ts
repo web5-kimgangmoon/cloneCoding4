@@ -25,7 +25,9 @@ export class User_service {
   }
   async findAll(name: string) {
     return await prisma.user.findMany({
-      where: { name: { contains: name }, email: { contains: name } },
+      where: {
+        OR: [{ name: { contains: name } }, { email: { contains: name } }],
+      },
     });
   }
   async login(id_str: string, password: string) {

@@ -15,7 +15,7 @@ model User {
     password String @db.VarChar(256)
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
-    Like Like[]
+    Like Post_like[]
     View_date View_date[]
     Post Post[]
 }
@@ -30,13 +30,13 @@ model Post {
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
     replied_post Post[] @relation("Reply")
-    Like Like[]
+    Like Post_like[]
     View_date View_date[]
     Writer User @relation(fields:[writer_id], references: [id], onDelete:NoAction, onUpdate: NoAction, map:"Post_idfk_1")
     reply Post? @relation("Reply", fields: [reply_id], references: [id], onDelete: NoAction,onUpdate: NoAction, map:"Post_idfk_2")
 }
 
-model Like {
+model Post_like {
     id Int @id @default(autoincrement())
     user_id Int
     post_id Int

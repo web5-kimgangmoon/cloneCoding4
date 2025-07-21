@@ -136,6 +136,7 @@ export class Post_controller {
 
   @Get('/filter')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(new AuthGuard())
   @ApiOkResponse({
     description: '자신의 게시글과 관련된 정보들을 보여줍니다.',

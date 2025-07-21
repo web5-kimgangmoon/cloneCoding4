@@ -16,6 +16,12 @@ export class Post_service {
     img_link?: string,
     reply_id?: number,
   ) {
+    if (
+      reply_id &&
+      (await prisma.post.findFirst({ where: { id: reply_id } })) === null
+    ) {
+      throw new BadRequestException('reply post does not exists.');
+    }
     return await prisma.post.create({
       data: { content, img_link, writer_id, reply_id },
     });
@@ -50,16 +56,16 @@ export class Post_service {
   }
   async like(post_id: number, user_id: number) {
     let result: boolean = false;
-    const target = await prisma.like.findFirst({
+    const target = await prisma.post_like.findFirst({
       where: { AND: { post_id, user_id } },
     });
     if (target) {
-      await prisma.like.delete({
+      await prisma.post_like.delete({
         where: { id: target.id },
       });
       result = false;
     } else {
-      await prisma.like.create({ data: { post_id, user_id } });
+      await prisma.post_like.create({ data: { post_id, user_id } });
       result = true;
     }
     return result;
@@ -78,22 +84,21 @@ export class Post_service {
       switch (list) {
         case 'posts':
           // 자신이 쓴 게시글
-          await prisma.post.findMany({ where: { writer_id: user_id } });
-          break;
+          return await prisma.post.findMany({
+            where: { writer_id: user_id, reply_id: null },
+          });
         case 'replies':
           // 자신이 쓴 댓글
-          await prisma.post.findMany({
+          return await prisma.post.findMany({
             where: { AND: { writer_id: user_id, reply_id: { not: null } } },
           });
-          break;
         case 'likes':
           // 자신이 추천한 게시글 혹은 댓글
-          await prisma.$queryRaw`
+          return await prisma.$queryRaw`
           SELECT Post.*
           FROM Post
-          JOIN Like ON Like.post_id = Post.id
-          WHERE Like.user_id = ${user_id}`;
-          break;
+          JOIN Post_like ON Post_like.post_id = Post.id
+          WHERE Post_like.user_id = ${user_id}`;
       }
     }
 
@@ -101,19 +106,18 @@ export class Post_service {
       switch (list) {
         case 'posts':
           //  자신이 쓴 게시글에 다른 사람이 달아준 댓글
-          await prisma.$queryRaw`
+          return await prisma.$queryRaw`
   SELECT p2.*
   FROM Post p1
   JOIN Post p2 ON p2.reply_id = p1.id
   WHERE p1.writer_id = ${user_id}
-    AND NOT EXISTS (
-      SELECT 1 FROM View_date vd WHERE vd.post_id = p2.id
+    AND p2.created_at < (
+      SELECT last_view FROM View_date vd WHERE vd.post_id = p1.id
     )
-`;
-          break;
+`; // 3개 조인으로 수정필요.
         case 'replies':
           //  자신이 쓴 댓글에 다른 사람이 달아준 댓글
-          await prisma.$queryRaw`
+          return await prisma.$queryRaw`
   SELECT p2.*
   FROM Post p1
   JOIN Post p2 ON p2.reply_id = p1.id
@@ -123,7 +127,6 @@ export class Post_service {
       SELECT 1 FROM View_date vd WHERE vd.post_id = p2.id
     )
 `;
-          break;
       }
     }
   }
