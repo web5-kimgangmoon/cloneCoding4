@@ -177,6 +177,12 @@ export class Post_controller {
   }
 
   @Get('/:post_id')
+  @ApiHeader({
+    name: 'session_id',
+    description:
+      '사용자 편의 기능을 위해 수집하는 데이터를 위해 사용자의 정보를 수집합니다.',
+    required: false,
+  })
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   // swagger
@@ -190,8 +196,12 @@ export class Post_controller {
     type: 'number',
     name: 'post_id',
   })
-  async findOne(@Param() params: Post_param_postId) {
-    return await this.post_service.findOne(params.post_id);
+  async findOne(
+    @Param() params: Post_param_postId,
+    @Session() session: { session_id?: number },
+  ) {
+    console.log(session.session_id);
+    return await this.post_service.findOne(params.post_id, session.session_id);
   }
 
   @Get('/:post_id/like')

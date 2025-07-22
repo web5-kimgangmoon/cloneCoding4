@@ -10,20 +10,38 @@ import { unlink } from 'fs';
 
 @Injectable()
 export class Post_service {
+  private async search_top(reply_id: number): Promise<number | null> {
+    const result: { id: number }[] =
+      await prisma.$queryRaw`WITH RECURSIVE cte (id, reply_id) as (
+	select id, reply_id
+	from Post
+	where id=${reply_id}
+
+	union all
+
+	select p.id, p.reply_id
+	from Post p
+	join cte on p.id = cte.reply_id
+)
+select id from cte where reply_id IS NULL LIMIT 1;
+`;
+    return result.length > 0 ? result[0].id : null;
+  }
   async create(
     content: string,
     writer_id: number,
     img_link?: string,
     reply_id?: number,
   ) {
-    if (
-      reply_id &&
-      (await prisma.post.findFirst({ where: { id: reply_id } })) === null
-    ) {
-      throw new BadRequestException('reply post does not exists.');
+    let top_post_id: null | number = null;
+    if (reply_id) {
+      top_post_id = await this.search_top(reply_id);
+      if (!top_post_id)
+        throw new BadRequestException('reply post does not exists.');
     }
+
     return await prisma.post.create({
-      data: { content, img_link, writer_id, reply_id },
+      data: { content, img_link, writer_id, reply_id, top_post_id },
     });
   }
   async update(
@@ -55,6 +73,8 @@ export class Post_service {
     });
   }
   async like(post_id: number, user_id: number) {
+    if ((await prisma.post.findFirst({ where: { id: post_id } })) === null)
+      throw new BadRequestException('the post does not exists.');
     let result: boolean = false;
     const target = await prisma.post_like.findFirst({
       where: { AND: { post_id, user_id } },
@@ -109,41 +129,71 @@ export class Post_service {
           return await prisma.$queryRaw`
   SELECT p2.*
   FROM Post p1
-  JOIN Post p2 ON p2.reply_id = p1.id
+  JOIN Post p2 ON p2.top_post_id = p1.id
+  LEFT JOIN View_date vd ON p1.id = vd.post_id
   WHERE p1.writer_id = ${user_id}
-    AND p2.created_at < (
-      SELECT last_view FROM View_date vd WHERE vd.post_id = p1.id
-    )
-`; // 3개 조인으로 수정필요.
+    AND p2.reply_id = p2.top_post_id
+    AND p2.writer_id != ${user_id}
+    AND (vd.last_view IS NULL
+    OR p2.created_at > vd.last_view)
+`;
         case 'replies':
           //  자신이 쓴 댓글에 다른 사람이 달아준 댓글
           return await prisma.$queryRaw`
   SELECT p2.*
   FROM Post p1
-  JOIN Post p2 ON p2.reply_id = p1.id
-  WHERE p1.reply_id IS NOT NULL
-    AND p1.writer_id = ${user_id}
-    AND NOT EXISTS (
-      SELECT 1 FROM View_date vd WHERE vd.post_id = p2.id
-    )
+  JOIN Post p2 ON p2.top_post_id = p1.id
+  LEFT JOIN View_date vd ON p1.id = vd.post_id
+  WHERE p1.writer_id = ${user_id}
+    AND p2.reply_id != p2.top_post_id
+    AND p2.writer_id != ${user_id}
+    AND (vd.last_view IS NULL
+    OR p2.created_at > vd.last_view)
 `;
       }
     }
   }
-  async findOne(id: number) {
+  async findOne(id: number, user_id?: number) {
     const target = await prisma.post.findFirst({
       where: { id, reply_id: null },
-      include: { replied_post: {} },
     });
     if (target === null)
       throw new BadRequestException('The post does not exists.');
 
+    const replied_post = await prisma.post.findMany({
+      where: { top_post_id: id },
+    });
+
+    if (user_id) {
+      const view_date = await prisma.view_date.findFirst({
+        where: {
+          post_id: id,
+          writer_id: target.writer_id,
+          viewer_id: user_id,
+        },
+      });
+
+      if (view_date === null)
+        await prisma.view_date.create({
+          data: {
+            post_id: id,
+            writer_id: target.writer_id,
+            viewer_id: user_id,
+            last_view: new Date(),
+          },
+        });
+      else
+        await prisma.view_date.update({
+          data: { last_view: new Date() },
+          where: { id: view_date.id },
+        });
+    }
     const updated = await prisma.post.update({
       data: { view_cnt: { increment: 1 } },
       where: { id },
-      include: { replied_post: {} },
     });
-    return updated;
+
+    return { ...updated, replied_post };
   }
   async deletePost(id: number, user_id: number) {
     const target = await prisma.post.findFirst({ where: { id } });

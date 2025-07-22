@@ -12,6 +12,14 @@ export class Post_dto implements Post {
   reply_id: number | null;
 
   @ApiProperty({
+    name: 'top_post_id',
+    type: 'number',
+    minimum: 1,
+    nullable: true,
+  })
+  top_post_id: number | null;
+
+  @ApiProperty({
     name: 'content',
     type: 'string',
     minLength: 1,
