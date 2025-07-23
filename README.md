@@ -22,6 +22,7 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 1. 6/12까지 피그마 설계 완료. 가능하면 ERD까지 작성하기.
 2. nestjs 6/20일까지 세팅이 가능할 수준까지 공부하기.(시도가능)
 3. 6/15까지 api 문서 작성.(서버 코딩과 함께 작성하기)(6/24 완료)
+4. 7/23일, 백엔드 첫번째 작성완료.
 
 ## 후순위 목표
 
@@ -249,3 +250,11 @@ next, motion-framer, Embla Carousel, react, tailwind, github, @heroicons/react, 
 
 1. 현재 all, filter, like, 포스트 patch의 동작을 확인이 필요합니다.(like 완료, patch 체크 완료, filter 수정 진행중(다중 조인 문으로 수정 필요))
 2. 조회수가 늘어나는 로직이 필요합니다. (완료)
+
+### 7/23
+
+1. 세부조건 추가. 백엔드 완성.
+
+#### 느낀점
+
+처음 nest와 swagger, prisma, class-validator를 써봤고, 기존에 써봤던 라이브러리와 익숙한 점도 익숙치 않은 점도 많이 느꼈습니다. 특히, 최신 댓글과 글의 알림을 구현하는데 시간이 오래걸렸습니다. 백엔드 개발도 로직이 복잡해지고 문서화에 신경쓸수록 코드가 길어지고 구현이 힘들어진다는 사실을 깨달았습니다. 예상치못한 곳에서 서버에 갈 부담 때문에 top_post_id라는 속성을 추가해 비정규화할 필요도 있었고, 헤더의 content-type 문제도 해결해야 했습니다. 유익한 시간이었지만, 동시에 개인적으론 진한 경험이어서 기억에 오래 남고 잊지 않았으면 좋겠습니다...

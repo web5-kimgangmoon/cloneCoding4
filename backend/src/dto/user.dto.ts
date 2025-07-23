@@ -20,10 +20,9 @@ export class User_dto implements User {
   @ApiProperty({
     name: 'password',
     type: 'string',
-    minLength: 1,
+    minLength: 3,
     maxLength: 20,
-    description:
-      '암호화된 비밀번호로 실제 db에 저장될 경우는 256비트로 저장된다.',
+    // description: '암호화된 비밀번호로 실제 db에 저장될 경우는 256비트로 저장됩니다.',
   })
   password: string;
 
