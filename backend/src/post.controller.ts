@@ -35,7 +35,9 @@ import { Post_all_dto, Post_dto, Posts_dto } from './dto/post.dto';
 import {
   Post_body,
   Post_create_query,
-  Post_filer_query,
+  Post_filter_query,
+  Post_findOne_query,
+  Post_limit,
   Post_param_postId,
 } from './class-validator/post.check';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -130,8 +132,20 @@ export class Post_controller {
     description: '모든 게시글을 보여줍니다.',
     type: () => Posts_dto,
   })
-  async findAll(): Promise<{ posts: Post_dto[] }> {
-    return { posts: await this.post_service.findAll() };
+  @ApiQuery({
+    name: 'offset',
+    type: 'number',
+    required: false,
+    default: 0,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: 'number',
+    required: false,
+    default: 10,
+  })
+  async findAll(@Query() query: Post_limit): Promise<{ posts: Post_dto[] }> {
+    return { posts: await this.post_service.findAll(query) };
   }
 
   @Get('/filter')
@@ -163,14 +177,27 @@ export class Post_controller {
       'own일 경우, posts와 replies는 자신의 게시글과 댓글이며 likes는 자신이 추천한 게시글입니다. notification의 경우, posts는 자신의 게시글에 단 타인의 댓글을 replies는 자신의 댓글에 단 타인의 댓글을 불러오고 likes는 존재하지 않습니다.',
     default: 'posts',
   })
+  @ApiQuery({
+    name: 'offset',
+    type: 'number',
+    required: false,
+    default: 0,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: 'number',
+    required: false,
+    default: 10,
+  })
   async getFilter(
     @Session() session: { session_id: number },
-    @Query() query: Post_filer_query,
+    @Query() query: Post_filter_query,
   ) {
     return {
       posts: await this.post_service.filter(
         query.type,
         query.list,
+        { limit: query.limit, offset: query.offset },
         session.session_id,
       ),
     };
@@ -190,6 +217,30 @@ export class Post_controller {
     description: '특정 게시글을 댓글 목록들을 포함하여 전체를 확인합니다.',
     type: () => Post_all_dto,
   })
+  @ApiQuery({
+    name: 'offset',
+    type: 'number',
+    required: false,
+    default: 0,
+  })
+  @ApiQuery({
+    name: 'limit',
+    type: 'number',
+    required: false,
+    default: 10,
+  })
+  @ApiQuery({
+    name: 'hasPost',
+    required: false,
+    default: true,
+    example: 'true',
+  })
+  @ApiQuery({
+    name: 'hasReplies',
+    required: false,
+    default: true,
+    example: 'true',
+  })
   @ApiParam({
     description:
       '포스트의 id를 입력하세요. 댓글이 아닌 포스트의 id가 필요합니다.',
@@ -199,9 +250,13 @@ export class Post_controller {
   async findOne(
     @Param() params: Post_param_postId,
     @Session() session: { session_id?: number },
+    @Query() query: Post_findOne_query,
   ) {
-    console.log(session.session_id);
-    return await this.post_service.findOne(params.post_id, session.session_id);
+    return await this.post_service.findOne(
+      params.post_id,
+      query,
+      session.session_id,
+    );
   }
 
   @Get('/:post_id/like')
