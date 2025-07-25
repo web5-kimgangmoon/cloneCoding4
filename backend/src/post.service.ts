@@ -7,6 +7,7 @@ import {
 import { prisma } from './main';
 import { basename, extname } from 'path';
 import { unlink } from 'fs';
+import { Post_dto } from './dto/post.dto';
 
 @Injectable()
 export class Post_service {
@@ -113,7 +114,6 @@ export class Post_service {
     user_id?: number,
   ) {
     // gpt(Post 별칭 p1과 p2 테이블을 join하고 p2의 reply_id와 id가 같은 것끼리 링킹하고 where로 조건을 추가한다.)
-    let result: { [key: string]: any }[] = [];
     if (type === 'own') {
       switch (list) {
         case 'posts':
@@ -136,8 +136,9 @@ export class Post_service {
           });
         case 'likes':
           // 자신이 추천한 게시글 혹은 댓글
-          result = await prisma.$queryRaw`
-          SELECT Post.*, IFNULL(c.cmtCnt, 0) as cmtCnt
+          return (
+            await prisma.$queryRaw<(Post_dto & { cmtCnt: BigInt })[]>`
+          SELECT p.*, IFNULL(c.cmtCnt, 0) as cmtCnt
           FROM Post p
           JOIN Post_like pl ON pl.post_id = p.id
           LEFT JOIN (
@@ -146,10 +147,11 @@ export class Post_service {
             WHERE reply_id IS NOT NULL
             GROUP BY reply_id
           ) c on c.reply_id = p.id
-          WHERE p.user_id = ${user_id} ORDER BY p.created_at DESC LIMIT ${offset}, ${limit} `;
-          return result.map((value) => ({
+          WHERE pl.user_id = ${user_id} ORDER BY p.created_at DESC LIMIT ${offset}, ${limit}`
+          ).map((value) => ({
             ...value,
-            _count: { replied_post: value.cmtCnt },
+            cmtCnt: undefined,
+            _count: { replied_post: Number(value.cmtCnt) },
           }));
       }
     }
@@ -158,11 +160,12 @@ export class Post_service {
       switch (list) {
         case 'posts':
           //  자신이 쓴 게시글에 다른 사람이 달아준 댓글
-          result = await prisma.$queryRaw`
+          return (
+            await prisma.$queryRaw<(Post_dto & { cmtCnt: BigInt })[]>`
   SELECT p2.*, IFNULL(c.cmtCnt, 0) as cmtCnt
   FROM Post p1
   JOIN Post p2 ON p2.reply_id = p1.id
-  LEFT JOIN View_date vd ON p1.id = vd.post_id
+  LEFT JOIN View_date vd ON p1.id = vd.post_id AND vd.viewer_id = ${user_id}
   LEFT JOIN (
     SELECT reply_id, COUNT(*) as cmtCnt
     FROM Post
@@ -173,32 +176,35 @@ export class Post_service {
     AND p2.writer_id != ${user_id}
     AND (vd.last_view IS NULL
     OR p2.created_at > vd.last_view) ORDER BY p2.created_at DESC LIMIT ${offset}, ${limit}
-`;
-          return result.map((value) => ({
+`
+          ).map((value) => ({
             ...value,
-            _count: { replied_post: value.cmtCnt },
+            cmtCnt: undefined,
+            _count: { replied_post: Number(value.cmtCnt) },
           }));
         case 'replies':
           //  자신이 쓴 댓글에 다른 사람이 달아준 댓글
-          result = await prisma.$queryRaw`
+          return (
+            await prisma.$queryRaw<(Post_dto & { cmtCnt: BigInt })[]>`
   SELECT p2.*, IFNULL(c.cmtCnt, 0) as cmtCnt
   FROM Post p1
   JOIN Post p2 ON p2.reply_id = p1.id
-  LEFT JOIN View_date vd ON p1.id = vd.post_id
+  LEFT JOIN View_date vd ON p1.id = vd.post_id AND vd.viewer_id = ${user_id}
   LEFT JOIN (
     SELECT reply_id, COUNT(*) as cmtCnt
     FROM Post
     GROUP BY reply_id
   ) c ON c.reply_id = p2.id
   WHERE p1.writer_id = ${user_id}
-    AND p1.reply_id != NULL
+    AND p1.reply_id IS NOT NULL
     AND p2.writer_id != ${user_id}
     AND (vd.last_view IS NULL
     OR p2.created_at > vd.last_view) ORDER BY p2.created_at DESC LIMIT ${offset}, ${limit}
-`;
-          return result.map((value) => ({
+`
+          ).map((value) => ({
             ...value,
-            _count: { replied_post: value.cmtCnt },
+            cmtCnt: undefined,
+            _count: { replied_post: Number(value.cmtCnt) },
           }));
       }
     }
@@ -213,38 +219,7 @@ export class Post_service {
     }: { limit: number; offset: number; hasPost: boolean; hasReplies: boolean },
     user_id?: number,
   ) {
-    const target = await prisma.post.findFirst({
-      where: { id },
-    });
-    if (target === null)
-      throw new BadRequestException('The post does not exists.');
-
-    if (user_id) {
-      const view_date = await prisma.view_date.findFirst({
-        where: {
-          post_id: id,
-          writer_id: target.writer_id,
-          viewer_id: user_id,
-        },
-      });
-
-      if (view_date === null)
-        await prisma.view_date.create({
-          data: {
-            post_id: id,
-            writer_id: target.writer_id,
-            viewer_id: user_id,
-            last_view: new Date(),
-          },
-        });
-      else
-        await prisma.view_date.update({
-          data: { last_view: new Date() },
-          where: { id: view_date.id },
-        });
-    }
-    const updated = await prisma.post.update({
-      data: { view_cnt: { increment: 1 } },
+    let target = await prisma.post.findFirst({
       where: { id },
       include: {
         _count: { select: { replied_post: true } },
@@ -256,10 +231,46 @@ export class Post_service {
         },
       },
     });
+    if (target === null)
+      throw new BadRequestException('The post does not exists.');
+
+    if (user_id) {
+      const view_date = await prisma.view_date.findFirst({
+        where: {
+          post_id: id,
+          viewer_id: user_id,
+        },
+      });
+
+      if (view_date === null)
+        await prisma.view_date.create({
+          data: {
+            post_id: id,
+            viewer_id: user_id,
+            last_view: new Date(),
+          },
+        });
+      else
+        await prisma.view_date.update({
+          data: { last_view: new Date() },
+          where: { id: view_date.id },
+        });
+    }
 
     return {
-      target: hasPost ? { ...updated, replied_post: undefined } : {},
-      replied_post: hasReplies ? updated.replied_post : [],
+      target: hasPost
+        ? {
+            ...target,
+            view_cnt: (
+              await prisma.post.update({
+                data: { view_cnt: { increment: 1 } },
+                where: { id },
+              })
+            ).view_cnt,
+            replied_post: undefined,
+          }
+        : {},
+      replied_post: hasReplies ? target.replied_post : [],
     };
   }
   async deletePost(id: number, user_id: number) {

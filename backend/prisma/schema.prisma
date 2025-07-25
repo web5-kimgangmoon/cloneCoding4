@@ -18,7 +18,7 @@ model User {
     Like Post_like[]
     Post Post[]
 
-    View_date_writer View_date[] @relation("Writer")
+    // View_date_writer View_date[] @relation("Writer")
     View_date_viewer View_date[] @relation("Viewer")
 }
 
@@ -54,11 +54,11 @@ model Post_like {
 model View_date{
     id Int @id @default(autoincrement())
     last_view DateTime
-    writer_id Int
+    // writer_id Int
     viewer_id Int
     post_id Int
     
-    Writer User @relation("Writer",fields:[writer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"View_date_idfk_1")
+    // Writer User @relation("Writer",fields:[writer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"View_date_idfk_1")
     Viewer User @relation("Viewer",fields:[viewer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"View_date_idfk_2")
     Post Post @relation(fields:[post_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map:"View_date_idfk_3")
 }
