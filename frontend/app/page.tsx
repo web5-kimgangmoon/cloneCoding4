@@ -1,11 +1,13 @@
-import Image from "next/image";
+import { CenterSection } from "./component/centerSection";
+import { LeftSection } from "./component/leftSection";
+import { RightSection } from "./component/rightSection";
 
 export default function Home() {
   return (
-    <div>
-      <LeftNav></LeftNav>
-      <CenterBody></CenterBody>
-      <RightNav></RightNav>
-    </div>
+    <>
+      <LeftSection></LeftSection>
+      <CenterSection></CenterSection>
+      <RightSection></RightSection>
+    </>
   );
 }
