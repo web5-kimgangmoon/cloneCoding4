@@ -1,36 +1,63 @@
+import { BellIcon, HomeIcon, UserIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 
 export const LeftSection = () => {
   return (
-    <div>
+    <section>
+      <header className="w-10 h-10">
+        <Logo />
+      </header>
       <MenuBar></MenuBar>
       {/* <Post></Post>
       <UserBtn></UserBtn> */}
-    </div>
+    </section>
+  );
+};
+
+const Logo = () => {
+  return (
+    <Link href={"/"} className="w-full h-full block relative">
+      <Image
+        src={"logo.svg"}
+        alt="logo.svg"
+        style={{ objectFit: "fill" }}
+        fill
+      />
+    </Link>
   );
 };
 
 const MenuBar = () => {
-  const imgArr = [{ src: "logo.svg", alt: "logo.svg", href: "/" }];
+  const menuArr = [
+    { icon: "Home", href: "/", title: "Home" },
+    { icon: "profile", href: "/", title: "profile" },
+    { icon: "notification", href: "/", title: "notification" },
+  ];
   return (
     <nav>
-      <ul>
-        <li className="block w-4 h-4">
-          <Link href={"/"} className="w-full h-full block relative">
-            <Image
-              src={"logo.svg"}
-              alt="logo.svg"
-              style={{ objectFit: "fill" }}
-              fill
-            />
-          </Link>
-        </li>
+      <ul className="grid gap-5 pt-5">
+        {menuArr.map((v, idx) => (
+          <li className="" key={idx}>
+            <Link href={"/"} className="flex items-center gap-2">
+              {v.icon === "Home" && (
+                <HomeIcon className="inline-block w-10 h-10" />
+              )}
+              {v.icon === "profile" && (
+                <UserIcon className="inline-block w-10 h-10" />
+              )}
+              {v.icon === "notification" && (
+                <BellIcon className="inline-block w-10 h-10" />
+              )}
+              <span className="text-xl">{v.title}</span>
+            </Link>
+          </li>
+        ))}
       </ul>
-      {/* <Logo></Logo>
-      <Home></Home>
-      <Profile></Profile>
-      <Notification></Notification> */}
     </nav>
   );
+};
+
+const PostBtn = () => {
+  return <button></button>;
 };
