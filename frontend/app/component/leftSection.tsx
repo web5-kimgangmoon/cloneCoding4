@@ -9,8 +9,8 @@ export const LeftSection = () => {
         <Logo />
       </header>
       <MenuBar></MenuBar>
-      {/* <Post></Post>
-      <UserBtn></UserBtn> */}
+      <PostBtn />
+      {/* <UserBtn></UserBtn> */}
     </section>
   );
 };
@@ -31,14 +31,14 @@ const Logo = () => {
 const MenuBar = () => {
   const menuArr = [
     { icon: "Home", href: "/", title: "Home" },
-    { icon: "profile", href: "/", title: "profile" },
-    { icon: "notification", href: "/", title: "notification" },
+    { icon: "profile", href: "/", title: "Profile" },
+    { icon: "notification", href: "/", title: "Notification" },
   ];
   return (
     <nav>
       <ul className="grid gap-5 pt-5">
         {menuArr.map((v, idx) => (
-          <li className="" key={idx}>
+          <li className="w-fit" key={idx}>
             <Link href={"/"} className="flex items-center gap-2">
               {v.icon === "Home" && (
                 <HomeIcon className="inline-block w-10 h-10" />
@@ -59,5 +59,7 @@ const MenuBar = () => {
 };
 
 const PostBtn = () => {
-  return <button></button>;
+  return (
+    <button className="bg-black text-white py-1 w-35 rounded-4xl">Post</button>
+  );
 };
