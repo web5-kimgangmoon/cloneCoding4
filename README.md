@@ -336,3 +336,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 ### 8/11
 
 1. 이사 도왔습니다.
+
+### 8/12
+
+1. left section 작성중.
