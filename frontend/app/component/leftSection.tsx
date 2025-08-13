@@ -5,12 +5,16 @@ import Link from "next/link";
 
 export const LeftSection = () => {
   return (
-    <section>
-      <header className="w-10 h-10">
-        <Logo />
-      </header>
-      <MenuBar></MenuBar>
-      <PostBtn />
+    <section className="flex flex-col justify-between h-full">
+      <div>
+        <header className="w-10 h-10">
+          <Logo />
+        </header>
+
+        <MenuBar></MenuBar>
+        <PostBtn />
+      </div>
+
       <UserBtn></UserBtn>
     </section>
   );
@@ -68,8 +72,8 @@ const PostBtn = () => {
 const UserBtn = () => {
   return (
     <Menu>
-      <MenuButton className={"relative flex"}>
-        <span className="block relative w-5 h-5">
+      <MenuButton className={"relative flex items-center"}>
+        <span className="block relative w-12 aspect-square">
           <Image
             src={"userImg.svg"}
             alt="userImg.svg"
@@ -77,11 +81,11 @@ const UserBtn = () => {
             fill
           ></Image>
         </span>
-        <span className="block">
-          <div className="block">김강문</div>
+        <span className="block text-sm">
+          <div className="block font-bold">김강문</div>
           <div className="block">@SSD</div>
         </span>
-        <span className="block">
+        <span className="block relative w-4 h-4">
           <Image
             src={"···.svg"}
             alt="···.svg"

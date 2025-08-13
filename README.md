@@ -340,3 +340,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 ### 8/12
 
 1. left section 작성중.
+
+### 8/13
+
+1. left section 작성중.
