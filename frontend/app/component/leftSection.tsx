@@ -72,16 +72,17 @@ const PostBtn = () => {
 const UserBtn = () => {
   return (
     <Menu>
-      <MenuButton className={"relative flex items-center"}>
+      <MenuButton className={"relative flex items-center py-6"}>
         <span className="block relative w-12 aspect-square">
           <Image
+            className="rounded-full"
             src={"userImg.svg"}
             alt="userImg.svg"
             style={{ objectFit: "fill" }}
             fill
           ></Image>
         </span>
-        <span className="block text-sm">
+        <span className="block text-sm w-full">
           <div className="block font-bold">김강문</div>
           <div className="block">@SSD</div>
         </span>
