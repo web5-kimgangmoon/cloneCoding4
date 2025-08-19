@@ -1,17 +1,18 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { BellIcon, HomeIcon, UserIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 
 export const LeftSection = () => {
   return (
-    <section className="flex flex-col justify-between h-full">
+    <section className="flex flex-col justify-between w-1/7 pr-2 h-full select-none border-r border-Lgray">
       <div>
         <header className="w-10 h-10">
           <Logo />
         </header>
 
-        <MenuBar></MenuBar>
+        <MenuBar selectedStr="Home"></MenuBar>
         <PostBtn />
       </div>
 
@@ -33,7 +34,7 @@ const Logo = () => {
   );
 };
 
-const MenuBar = () => {
+const MenuBar = ({ selectedStr }: { selectedStr: string }) => {
   const menuArr = [
     { icon: "Home", href: "/", title: "Home" },
     { icon: "profile", href: "/", title: "Profile" },
@@ -54,7 +55,14 @@ const MenuBar = () => {
               {v.icon === "notification" && (
                 <BellIcon className="inline-block w-10 h-10" />
               )}
-              <span className="text-xl">{v.title}</span>
+              <span
+                className={clsx(
+                  "text-xl",
+                  selectedStr === v.title && "font-bold"
+                )}
+              >
+                {v.title}
+              </span>
             </Link>
           </li>
         ))}
@@ -82,9 +90,9 @@ const UserBtn = () => {
             fill
           ></Image>
         </span>
-        <span className="block text-sm w-full">
-          <div className="block font-bold">김강문</div>
-          <div className="block">@SSD</div>
+        <span className="block text-sm w-full pl-2">
+          <span className="block text-left font-bold">김강문</span>
+          <span className="block text-left text-Dgray">@SSD</span>
         </span>
         <span className="block relative w-4 h-4">
           <Image
