@@ -1,3 +1,3 @@
 export const CenterSection = () => {
-  return <div></div>;
+  return <section className="w-full"></section>;
 };

@@ -365,3 +365,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 
 1. left section 개략적인 형태 작성 완료.
 2. right section 작업시작.
+
+### 8/18
+
+1. right section 작업중.
