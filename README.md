@@ -357,15 +357,19 @@ filter, all, /:post_id offset과 limit 추가 필요.
 
 1. 쉬었습니다. 죄송합니다.
 
-### 8/17
+### 8/18
 
 1. left section 작성중.
 
-### 8/18
+### 8/19
 
 1. left section 개략적인 형태 작성 완료.
 2. right section 작업시작.
 
-### 8/18
+### 8/20
 
 1. right section 작업중.
+
+### 8/21
+
+1. 검색창 레이아웃 구현중.
