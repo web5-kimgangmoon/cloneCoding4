@@ -45,11 +45,14 @@ export const RightSection = () => {
             }}
           />
         </label>
-        <div hidden={!isFocus} className="absolute top-full left-0">
-          <div className="w-5 h-5 bg-blue-500"></div>
-          <div></div>
-          <div></div>
-          <div></div>
+        <div
+          hidden={!isFocus}
+          className="absolute top-full left-0 w-full h-auto rounded-2xl overflow-hidden shadow-xl"
+        >
+          <div className="w-full h-5 bg-blue-500"></div>
+          <div className="w-full h-5 bg-red-500"></div>
+          <div className="w-full h-5 bg-green-500"></div>
+          <div className="w-full h-5 bg-yellow-500"></div>
         </div>
       </div>
     </section>
