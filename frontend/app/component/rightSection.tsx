@@ -18,7 +18,7 @@ export const RightSection = () => {
   const [isFocus, setIsFocus] = useState(false);
   return (
     <section className="flex flex-col justify-between w-2/7 pr-2 h-full select-none border-l border-Lgray">
-      <div className="relative w-full h-8 mx-5">
+      <div className="relative w-full h-10 mx-4">
         <label
           className={
             "relative pl-10 flex items-center w-full h-full border border-Dgray rounded-3xl"
@@ -38,6 +38,7 @@ export const RightSection = () => {
           <input
             className="outline-none w-full h-full pr-4"
             id={inputId}
+            placeholder="Search"
             type="text"
             value={text}
             onChange={(e) => {
