@@ -48,12 +48,25 @@ export const RightSection = () => {
         </label>
         <div
           hidden={!isFocus}
-          className="absolute top-full left-0 w-full h-auto rounded-2xl overflow-hidden shadow-xl"
+          className="absolute top-full left-0 w-full h-auto rounded-2xl overflow-hidden shadow-md p-4"
         >
-          <div className="w-full h-5 bg-blue-500"></div>
-          <div className="w-full h-5 bg-red-500"></div>
-          <div className="w-full h-5 bg-green-500"></div>
-          <div className="w-full h-5 bg-yellow-500"></div>
+          <ul>
+            <li className="flex">
+              <span className="block relative w-12 aspect-square">
+                <Image
+                  className="rounded-full"
+                  src={"userImg.svg"}
+                  alt="userImg.svg"
+                  style={{ objectFit: "fill" }}
+                  fill
+                ></Image>
+              </span>
+              <span className="block text-sm w-full pl-2">
+                <span className="block text-left font-bold">김강문</span>
+                <span className="block text-left text-Dgray">@SSD</span>
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
     </section>

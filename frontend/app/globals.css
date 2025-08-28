@@ -8,7 +8,8 @@
 @theme {
   --breakpoint-xl: 1440px;
   --color-Lgray: #eff3f4;
-  --color-Dgray: #979696, 0.93;
+  --color-Dgray: rgba(150, 150, 151, 0.93);
+  --shadow-md: 0px 0px 3px 2px rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
