@@ -397,3 +397,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 ### 8/28
 
 1. right section 작업중.
+
+### 8/29
+
+1. 쉬었습니다. 죄송합니다.
