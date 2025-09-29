@@ -49,7 +49,7 @@ export const RightSection = () => {
         </label>
         <div
           hidden={!isFocus}
-          className="absolute top-full left-0 w-full h-auto rounded-2xl overflow-hidden shadow-md p-4 bg-white"
+          className="absolute top-full left-0 w-full h-auto rounded-2xl overflow-hidden shadow-md p-4 bg-white z-5"
         >
           <ul className="grid grid-rows-1 gap-4">
             <SearchItem name="김강문" email="SSD" href=""></SearchItem>
@@ -97,8 +97,10 @@ const SearchItem = ({
 const ArticlesSection = () => {
   return (
     <div className="p-4 border-1 border-Lgray rounded-2xl mt-5">
-      <h3 className="text-xl font-bold">What's happening</h3>
+      <h3 className="text-xl font-bold pb-3">What's happening</h3>
       <ul className="grid grid-rows-1 gap-2">
+        <ArticleItem name="김강문" email="ssd" href=""></ArticleItem>
+        <ArticleItem name="김강문" email="ssd" href=""></ArticleItem>
         <ArticleItem name="김강문" email="ssd" href=""></ArticleItem>
       </ul>
     </div>
@@ -116,8 +118,8 @@ const ArticleItem = ({
 }) => {
   return (
     <li>
-      <Link href={href} className="flex">
-        <span className="block relative w-12 aspect-square">
+      <span className="flex pb-3">
+        <span className="block relative w-9 aspect-square">
           <Image
             className="rounded-full"
             src={"userImg.svg"}
@@ -126,11 +128,22 @@ const ArticleItem = ({
             fill
           ></Image>
         </span>
-        <span className="block text-sm w-full pl-2">
-          <span className="block text-left font-bold">{name}</span>
-          <span className="block text-left text-Dgray">@{email}</span>
+        <span className="flex items-center grow h-9">
+          <span className="block grow pl-2">
+            <span className="block text-sm text-left font-bold">{name}</span>
+            <span className="block text-xs text-left text-Dgray">@{email}</span>
+          </span>
+          <button className="text-nowrap">
+            <Link
+              href={href}
+              className="text-xs text-white bg-black px-3 py-1 rounded-xl"
+            >
+              보러가기
+            </Link>
+          </button>
         </span>
-      </Link>
+      </span>
+      <span className="text-sm">제목투성이의 제목</span>
     </li>
   );
 };
