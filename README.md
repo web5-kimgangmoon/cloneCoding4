@@ -505,3 +505,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 ### 9/29
 
 1. right section 작성중.
+
+### 9/30
+
+1. left section 작성중.

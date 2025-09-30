@@ -103,20 +103,18 @@ const UserBtn = () => {
           />
         </span>
       </MenuButton>
-      <MenuItems anchor="top">
+      <MenuItems
+        anchor="top"
+        className={"outline-none shadow-md border text-sm"}
+      >
         <MenuItem>
-          <a className="block data-focus:bg-blue-100" href="/settings">
-            Settings
+          <a className="block" href="/settings">
+            Add an existing account
           </a>
         </MenuItem>
         <MenuItem>
-          <a className="block data-focus:bg-blue-100" href="/support">
-            Support
-          </a>
-        </MenuItem>
-        <MenuItem>
-          <a className="block data-focus:bg-blue-100" href="/license">
-            License
+          <a className="block" href="/support">
+            Log out @ssd
           </a>
         </MenuItem>
       </MenuItems>
