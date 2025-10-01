@@ -509,3 +509,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 ### 9/30
 
 1. left section 작성중.
+
+### 10/1
+
+1. 쉬었습니다. 죄송합니다.
