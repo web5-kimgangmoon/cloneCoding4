@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export const LeftSection = () => {
   return (
-    <section className="flex flex-col justify-between w-1/7 pr-2 h-full select-none border-r border-Lgray">
+    <section className="flex flex-col justify-between w-2/7 pr-2 h-full select-none border-r border-Lgray">
       <div>
         <header className="w-10 h-10">
           <Logo />
@@ -80,7 +80,11 @@ const PostBtn = () => {
 const UserBtn = () => {
   return (
     <Menu>
-      <MenuButton className={"relative flex items-center py-6"}>
+      <MenuButton
+        className={
+          "relative flex items-center mb-3 px-5 py-3 outline-none hover:bg-gray-200 rounded-4xl"
+        }
+      >
         <span className="block relative w-12 aspect-square">
           <Image
             className="rounded-full"
@@ -104,19 +108,28 @@ const UserBtn = () => {
         </span>
       </MenuButton>
       <MenuItems
-        anchor="top"
-        className={"outline-none shadow-md border text-sm"}
+        anchor="top start"
+        className={
+          "flex flex-col gap-2 py-2 outline-none shadow-md rounded-2xl border-Lgray text-sm translate-x-1/7 -translate-y-5 font-bold overflow-visible!"
+        }
       >
         <MenuItem>
-          <a className="block" href="/settings">
+          <a
+            className="block py-2 px-3 bg-gray-200/0 hover:bg-gray-200 hover:bg-opacity-100 transition-colors"
+            href="/settings"
+          >
             Add an existing account
           </a>
         </MenuItem>
         <MenuItem>
-          <a className="block" href="/support">
+          <a
+            className="block py-2 px-3 bg-gray-200/0 hover:bg-gray-200 hover:bg-opacity-100 transition-colors"
+            href="/support"
+          >
             Log out @ssd
           </a>
         </MenuItem>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1 rotate-45 w-2 aspect-square bg-white shadow-LBmd border-l-Lgray border-b-Lgray"></div>
       </MenuItems>
     </Menu>
   );

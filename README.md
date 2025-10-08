@@ -533,3 +533,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 ### 10/7
 
 1. 추석이라 쉬었습니다. 죄송합니다.
+
+### 10/8
+
+1. leftsection 하단 버튼 ui 작성.
