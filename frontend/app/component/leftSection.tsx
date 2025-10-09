@@ -1,4 +1,10 @@
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  MenuSection,
+} from "@headlessui/react";
 import { BellIcon, HomeIcon, UserIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
@@ -82,7 +88,7 @@ const UserBtn = () => {
     <Menu>
       <MenuButton
         className={
-          "relative flex items-center mb-3 px-5 py-3 outline-none hover:bg-gray-200 rounded-4xl"
+          "relative flex items-center mb-3 px-5 py-3 outline-none hover:bg-gray-200 rounded-4xl cursor-pointer"
         }
       >
         <span className="block relative w-12 aspect-square">
@@ -110,25 +116,31 @@ const UserBtn = () => {
       <MenuItems
         anchor="top start"
         className={
-          "flex flex-col gap-2 py-2 outline-none shadow-md rounded-2xl border-Lgray text-sm translate-x-1/7 -translate-y-5 font-bold overflow-visible!"
+          "outline-none translate-x-1/7 -translate-y-5 overflow-visible!"
         }
       >
-        <MenuItem>
-          <a
-            className="block py-2 px-3 bg-gray-200/0 hover:bg-gray-200 hover:bg-opacity-100 transition-colors"
-            href="/settings"
-          >
-            Add an existing account
-          </a>
-        </MenuItem>
-        <MenuItem>
-          <a
-            className="block py-2 px-3 bg-gray-200/0 hover:bg-gray-200 hover:bg-opacity-100 transition-colors"
-            href="/support"
-          >
-            Log out @ssd
-          </a>
-        </MenuItem>
+        <MenuSection
+          className={
+            "flex flex-col gap-2 py-2 shadow-md rounded-2xl border-Lgray text-sm font-bold overflow-hidden"
+          }
+        >
+          <MenuItem>
+            <a
+              className="block py-2 px-3 bg-gray-200/0 hover:bg-gray-200 hover:bg-opacity-100 transition-colors"
+              href="/settings"
+            >
+              Add an existing account
+            </a>
+          </MenuItem>
+          <MenuItem>
+            <a
+              className="block py-2 px-3 bg-gray-200/0 hover:bg-gray-200 hover:bg-opacity-100 transition-colors"
+              href="/support"
+            >
+              Log out @ssd
+            </a>
+          </MenuItem>
+        </MenuSection>
         <div className="absolute -bottom-1 left-1/2 -translate-x-1 rotate-45 w-2 aspect-square bg-white shadow-LBmd border-l-Lgray border-b-Lgray"></div>
       </MenuItems>
     </Menu>

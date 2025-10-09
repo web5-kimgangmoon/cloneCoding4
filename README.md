@@ -536,4 +536,9 @@ filter, all, /:post_id offset과 limit 추가 필요.
 
 ### 10/8
 
-1. leftsection 하단 버튼 ui 작성.
+1. leftSection 하단 버튼 ui 작성.
+
+### 10/9
+
+1. rightSection 버튼 ui의 overflow를 수정.
+2. centerSection 작성중.
