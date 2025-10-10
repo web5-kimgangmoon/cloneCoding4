@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { Qsort } from "../types";
 import Link from "next/link";
 import Image from "next/image";
-import { useId } from "react";
+import { useId, useState } from "react";
 
 export const CenterSection = ({
   sort,
@@ -54,36 +54,70 @@ const SortMenu = ({ sort, path }: { sort: Qsort; path: string }) => {
 };
 
 const WritingSection = () => {
+  const [img, setImg] = useState<null | [Blob, string]>(null);
   const imgInputId = useId();
+  const imgPreviewId = useId();
   return (
-    <div>
-      <div className="relative w-4 aspect-square">
+    <div className="flex items-start p-4 gap-3">
+      <div className="relative w-10 aspect-square rounded-full">
         <Image
           src={"userImg.svg"}
           alt="userImg.svg"
           fill
           style={{ objectFit: "fill" }}
+          className="rounded-full"
         ></Image>
       </div>
-      <div>
-        <input type="text"></input>
-        <label
-          className="block relative w-4 aspect-square cursor-pointer"
-          htmlFor={imgInputId}
-        >
-          <Image
-            src={"imgSelect.svg"}
-            alt="imgSelect.svg"
-            fill
-            style={{ objectFit: "fill" }}
-          ></Image>
-          <input
-            type="file"
-            className="hidden"
-            id={imgInputId}
-            accept="image/*"
-          ></input>
-        </label>
+      <div className="flex flex-col gap-[0.125rem] w-full">
+        <input
+          type="text"
+          placeholder="What's happening?"
+          className="outline-none w-full border-b border-Lgray select-none pb-1"
+        ></input>
+        <img
+          id={imgPreviewId}
+          className="w-full aspect-3/2 rounded-4xl pt-2"
+          style={{ display: "none" }}
+        ></img>
+        <div>
+          <label
+            className="block relative w-6 aspect-square cursor-pointer select-none"
+            htmlFor={imgInputId}
+          >
+            <Image
+              src={"imgSelect.svg"}
+              alt="imgSelect.svg"
+              fill
+              style={{ objectFit: "fill" }}
+            ></Image>
+            <input
+              type="file"
+              className="hidden"
+              id={imgInputId}
+              accept="image/*"
+              onChange={async (e) => {
+                const previewElem = document.getElementById(imgPreviewId);
+                if (e.currentTarget.files === null) return;
+                if (previewElem === null) return;
+                if (!e.currentTarget.files[0].type.match(/^image\//)) {
+                  e.currentTarget.value = "";
+                  return;
+                }
+
+                const blob = new Blob([e.currentTarget.files[0]], {
+                  type: e.currentTarget.files[0].type,
+                });
+                const previewURL = URL.createObjectURL(blob);
+                if (img !== null) URL.revokeObjectURL(img[1]);
+
+                setImg([blob, previewURL]);
+                previewElem.setAttribute("src", previewURL);
+                previewElem.style.display = "block";
+              }}
+            ></input>
+          </label>
+          <button>POST</button>
+        </div>
       </div>
     </div>
   );

@@ -542,3 +542,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 
 1. rightSection 버튼 ui의 overflow를 수정.
 2. centerSection 작성중.
+
+### 10/10
+
+1. centerSection 글작성 부분 작성중.
