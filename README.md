@@ -546,3 +546,9 @@ filter, all, /:post_id offset과 limit 추가 필요.
 ### 10/10
 
 1. centerSection 글작성 부분 작성중.
+
+### 10/11
+
+1. backend 미들웨어 enableCors 추가.(구체적인 설정 X)
+2. 게시글 작성기능 구현(요청), 로그인 기능을 구현 못했습니다. 요청과 응답이 주고받아짐만 확인.
+3. 게시글 작성 ui.

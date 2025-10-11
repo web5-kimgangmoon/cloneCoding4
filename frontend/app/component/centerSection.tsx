@@ -2,7 +2,8 @@ import clsx from "clsx";
 import { Qsort } from "../types";
 import Link from "next/link";
 import Image from "next/image";
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
+import { useWritingBoard } from "../interactServer/action/home";
 
 export const CenterSection = ({
   sort,
@@ -55,8 +56,33 @@ const SortMenu = ({ sort, path }: { sort: Qsort; path: string }) => {
 
 const WritingSection = () => {
   const [img, setImg] = useState<null | [Blob, string]>(null);
+  const [text, setText] = useState<string>("");
   const imgInputId = useId();
   const imgPreviewId = useId();
+  const textAreaId = useId();
+
+  const writingBoard = useWritingBoard();
+
+  // 임시 알림.(모달은 나중에 추가)
+  useEffect(() => {
+    if (writingBoard.error !== null) alert(writingBoard.error.message);
+    if (writingBoard.data !== undefined) {
+      alert(writingBoard.data.message);
+    }
+
+    const previewNode = document.getElementById(imgPreviewId);
+    const imgInputNode = document.getElementById(imgInputId);
+    const textNode = document.getElementById(textAreaId);
+    if (previewNode) previewNode.style.display = "none";
+    if (imgInputNode instanceof HTMLInputElement) imgInputNode.value = "";
+    if (textNode) {
+      textNode.style.height = "auto";
+      textNode.style.height = `${textNode.scrollHeight}px`;
+    }
+    setImg(null);
+    setText("");
+  }, [writingBoard.error, writingBoard.data]);
+
   return (
     <div className="flex items-start p-4 gap-3">
       <div className="relative w-10 aspect-square rounded-full">
@@ -69,17 +95,25 @@ const WritingSection = () => {
         ></Image>
       </div>
       <div className="flex flex-col gap-[0.125rem] w-full">
-        <input
-          type="text"
+        <textarea
+          name="text"
+          id={textAreaId}
           placeholder="What's happening?"
-          className="outline-none w-full border-b border-Lgray select-none pb-1"
-        ></input>
+          className="outline-none w-full break-all border-b border-Lgray select-none resize-none text-lg py-1 overflow-hidden"
+          onChange={(e) => {
+            e.currentTarget.style.height = "auto";
+            e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+            setText(e.currentTarget.value);
+          }}
+          rows={1}
+          value={text}
+        ></textarea>
         <img
           id={imgPreviewId}
-          className="w-full aspect-3/2 rounded-4xl pt-2"
+          className="w-full aspect-3/2 border border-Dgray rounded-4xl mt-3"
           style={{ display: "none" }}
         ></img>
-        <div>
+        <div className="flex justify-between pt-2 w-full">
           <label
             className="block relative w-6 aspect-square cursor-pointer select-none"
             htmlFor={imgInputId}
@@ -116,7 +150,24 @@ const WritingSection = () => {
               }}
             ></input>
           </label>
-          <button>POST</button>
+          <button
+            className={clsx(
+              "text-sm font-bold px-3 py-1 rounded-4xl text-white transition-colors",
+              img !== null || text !== ""
+                ? "bg-black cursor-pointer"
+                : "bg-Dgray"
+            )}
+            onClick={() => {
+              if (img !== null || text !== "")
+                writingBoard.mutate({
+                  content: text,
+                  img:
+                    img !== null && img[0] !== undefined ? img[0] : undefined,
+                });
+            }}
+          >
+            POST
+          </button>
         </div>
       </div>
     </div>

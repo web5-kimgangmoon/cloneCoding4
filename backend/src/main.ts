@@ -10,6 +10,9 @@ export const prisma = new PrismaClient();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // cors 정책(미봉책, 후일 수정필요)
+  app.enableCors();
+
   // api 문서 swagger로
   const config = new DocumentBuilder()
     .setTitle('board api')
