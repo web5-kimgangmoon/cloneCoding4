@@ -12,7 +12,7 @@ import Link from "next/link";
 
 export const LeftSection = () => {
   return (
-    <section className="flex flex-col justify-between w-2/7 pr-2 h-full select-none border-r border-Lgray">
+    <section className="sticky top-0 flex flex-col justify-between w-2/7 py-1 pr-2 h-screen select-none border-r border-Lgray">
       <div>
         <header className="w-10 h-10">
           <Logo />

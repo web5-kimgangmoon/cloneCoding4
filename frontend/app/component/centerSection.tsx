@@ -15,16 +15,17 @@ export const CenterSection = ({
   return (
     <section className="w-full">
       <SortMenu sort={sort} path={path}></SortMenu>
-      <WritingSection />
+      <WritingBlock />
+      <BoardListBlock />
     </section>
   );
 };
 
 const SortMenu = ({ sort, path }: { sort: Qsort; path: string }) => {
   return (
-    <header className="grid grid-rows-1 grid-cols-2 text-xl font-bold border-b border-b-Lgray select-none">
+    <header className="sticky backdrop-blur top-0 z-7 bg-white/30 grid grid-rows-1 grid-cols-2 text-xl font-bold border-b border-b-Lgray select-none">
       <Link
-        className="flex justify-center py-4"
+        className="flex justify-center py-4 hover:bg-Dgray/30 transition-colors"
         href={path + "?sort=boardList"}
       >
         <h6
@@ -38,7 +39,10 @@ const SortMenu = ({ sort, path }: { sort: Qsort; path: string }) => {
           BoardList
         </h6>
       </Link>
-      <Link className="flex justify-center py-4" href={path + "?sort=inform"}>
+      <Link
+        className="flex justify-center py-4 hover:bg-Dgray/30 transition-colors"
+        href={path + "?sort=inform"}
+      >
         <h6
           className={clsx(
             "relative w-max h-full",
@@ -54,7 +58,7 @@ const SortMenu = ({ sort, path }: { sort: Qsort; path: string }) => {
   );
 };
 
-const WritingSection = () => {
+const WritingBlock = () => {
   const [img, setImg] = useState<null | [Blob, string]>(null);
   const [text, setText] = useState<string>("");
   const imgInputId = useId();
@@ -112,6 +116,7 @@ const WritingSection = () => {
           id={imgPreviewId}
           className="w-full aspect-3/2 border border-Dgray rounded-4xl mt-3"
           style={{ display: "none" }}
+          alt={"there's no image"}
         ></img>
         <div className="flex justify-between pt-2 w-full">
           <label
@@ -132,6 +137,7 @@ const WritingSection = () => {
               onChange={async (e) => {
                 const previewElem = document.getElementById(imgPreviewId);
                 if (e.currentTarget.files === null) return;
+                if (e.currentTarget.files[0] === undefined) return;
                 if (previewElem === null) return;
                 if (!e.currentTarget.files[0].type.match(/^image\//)) {
                   e.currentTarget.value = "";
@@ -170,6 +176,115 @@ const WritingSection = () => {
           </button>
         </div>
       </div>
+    </div>
+  );
+};
+
+const BoardListBlock = () => {
+  return (
+    <div>
+      <ul className="">
+        <LiBoard
+          user="김강문"
+          email="@SSD"
+          img="search.svg"
+          content="joke"
+          boardId={0}
+        />
+        <LiBoard
+          user="김강문"
+          email="@SSD"
+          img="search.svg"
+          content="joke"
+          boardId={1}
+        />
+        <LiBoard
+          user="김강문"
+          email="@SSD"
+          img="search.svg"
+          content="joke"
+          boardId={2}
+        />
+        <LiBoard
+          user="김강문"
+          email="@SSD"
+          img="search.svg"
+          content="joke"
+          boardId={3}
+        />
+        <LiBoard
+          user="김강문"
+          email="@SSD"
+          img="search.svg"
+          content="joke"
+          boardId={4}
+        />
+      </ul>
+    </div>
+  );
+};
+
+const LiBoard = ({
+  content,
+  img,
+  user,
+  email,
+  boardId,
+}: {
+  content: string;
+  img: string;
+  user: string;
+  email: string;
+  boardId: number;
+}) => {
+  return (
+    <li className={"relative border-t last:border-b border-Lgray p-2"}>
+      <Link
+        className="flex items-start px-2 py-3 hover:bg-gray-200 transition-colors rounded-4xl cursor-pointer"
+        href={`post/${boardId}`}
+      >
+        <div className="block relative w-10 aspect-square">
+          <Image
+            className="rounded-full"
+            src={"userImg.svg"}
+            alt="userImg.svg"
+            style={{ objectFit: "fill" }}
+            fill
+          ></Image>
+        </div>
+        <div className="grow pl-2">
+          <h6 className="flex text-sm w-full gap-1 text-[1rem]">
+            <strong className="font-bold">{user}</strong>
+            <strong className="text-Dgray">{email}</strong>
+          </h6>
+          <p className="pb-1">{content}</p>
+          <div className="relative w-full aspect-3/2">
+            <Image
+              src={img}
+              alt={img}
+              className="border border-Dgray rounded-4xl"
+              fill
+              style={{ objectFit: "fill" }}
+            ></Image>
+          </div>
+          <footer className="flex pt-2">
+            <BIcon src="comment.svg" value={280}></BIcon>
+            <BIcon src="Heart.svg" value={280}></BIcon>
+            <BIcon src="view 1.svg" value={280}></BIcon>
+          </footer>
+        </div>
+      </Link>
+    </li>
+  );
+};
+
+const BIcon = ({ src, value }: { src: string; value: number }) => {
+  return (
+    <div className="flex grow text-Dgray items-center">
+      <div className="relative w-8 aspect-square">
+        <Image src={src} alt={src} fill style={{ objectFit: "fill" }}></Image>
+      </div>
+      <strong>{value}</strong>
     </div>
   );
 };

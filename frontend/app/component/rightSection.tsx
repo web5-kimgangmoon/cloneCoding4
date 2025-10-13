@@ -18,7 +18,7 @@ export const RightSection = () => {
   const [text, setText] = useState("");
   const [isFocus, setIsFocus] = useState(false);
   return (
-    <section className="flex flex-col w-3/7 h-full pl-4 border-l border-Lgray">
+    <section className="sticky top-0 flex flex-col w-3/7 h-screen py-1 pl-4 border-l border-Lgray">
       <div className="relative w-full h-10">
         <label
           className={
