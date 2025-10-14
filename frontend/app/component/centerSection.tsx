@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useId, useState } from "react";
 import { useWritingBoard } from "../interactServer/action/home";
+import { useGetPostAll } from "../interactServer/data/posts";
 
 export const CenterSection = ({
   sort,
@@ -181,9 +182,19 @@ const WritingBlock = () => {
 };
 
 const BoardListBlock = () => {
+  const boardList = useGetPostAll({ offset: 0, limit: 10 });
+
+  if (
+    boardList.data.pageParams.length === 0 &&
+    (boardList.isFetching || boardList.isPending)
+  )
+    return <div></div>;
   return (
     <div>
       <ul className="">
+        {/* {boardList.data.pages[0].posts.map((v)=><LiBoard
+        user={v.}
+        />)} */}
         <LiBoard
           user="김강문"
           email="@SSD"

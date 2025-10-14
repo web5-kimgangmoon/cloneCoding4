@@ -7,7 +7,7 @@ import {
 import { prisma } from './main';
 import { basename, extname } from 'path';
 import { unlink } from 'fs';
-import { Post_dto } from './dto/post.dto';
+import { Post_dto, PostRawQuery } from './dto/post.dto';
 
 @Injectable()
 export class Post_service {
@@ -104,7 +104,10 @@ export class Post_service {
       skip: offset,
       take: limit,
       orderBy: { created_at: 'desc' },
-      include: { _count: { select: { replied_post: true } } },
+      include: {
+        _count: { select: { replied_post: true } },
+        Writer: { select: { name: true, email: true } },
+      },
     });
   }
   async filter(
@@ -123,7 +126,10 @@ export class Post_service {
             skip: offset,
             take: limit,
             orderBy: { created_at: 'desc' },
-            include: { _count: { select: { replied_post: true } } },
+            include: {
+              _count: { select: { replied_post: true } },
+              Writer: { select: { name: true, email: true } },
+            },
           });
         case 'replies':
           // 자신이 쓴 댓글
@@ -132,13 +138,17 @@ export class Post_service {
             skip: offset,
             take: limit,
             orderBy: { created_at: 'desc' },
-            include: { _count: { select: { replied_post: true } } },
+            include: {
+              _count: { select: { replied_post: true } },
+              Writer: { select: { name: true, email: true } },
+            },
           });
+
         case 'likes':
           // 자신이 추천한 게시글 혹은 댓글
           return (
-            await prisma.$queryRaw<(Post_dto & { cmtCnt: BigInt })[]>`
-          SELECT p.*, IFNULL(c.cmtCnt, 0) as cmtCnt
+            await prisma.$queryRaw<(PostRawQuery & { cmtCnt: BigInt })[]>`
+          SELECT p.*, Writer.name, Writer.email, IFNULL(c.cmtCnt, 0) as cmtCnt
           FROM Post p
           JOIN Post_like pl ON pl.post_id = p.id
           LEFT JOIN (
@@ -147,12 +157,22 @@ export class Post_service {
             WHERE reply_id IS NOT NULL
             GROUP BY reply_id
           ) c on c.reply_id = p.id
+          JOIN Writer ON Writer.id = p.writer_id
           WHERE pl.user_id = ${user_id} ORDER BY p.created_at DESC LIMIT ${offset}, ${limit}`
-          ).map((value) => ({
-            ...value,
-            cmtCnt: undefined,
-            _count: { replied_post: Number(value.cmtCnt) },
-          }));
+          ).map(
+            (value): Post_dto => ({
+              id: value.id,
+              img_link: value.img_link,
+              reply_id: value.reply_id,
+              updated_at: value.updated_at,
+              view_cnt: value.view_cnt,
+              writer_id: value.writer_id,
+              content: value.content,
+              created_at: value.created_at,
+              Writer: { name: value.name, email: value.email },
+              _count: { replied_post: Number(value.cmtCnt) },
+            }),
+          );
       }
     }
 
@@ -161,8 +181,8 @@ export class Post_service {
         case 'posts':
           //  자신이 쓴 게시글에 다른 사람이 달아준 댓글
           return (
-            await prisma.$queryRaw<(Post_dto & { cmtCnt: BigInt })[]>`
-  SELECT p2.*, IFNULL(c.cmtCnt, 0) as cmtCnt
+            await prisma.$queryRaw<(PostRawQuery & { cmtCnt: BigInt })[]>`
+  SELECT p2.*, Writer.name, Writer.email, IFNULL(c.cmtCnt, 0) as cmtCnt
   FROM Post p1
   JOIN Post p2 ON p2.reply_id = p1.id
   LEFT JOIN View_date vd ON p1.id = vd.post_id AND vd.viewer_id = ${user_id}
@@ -171,22 +191,32 @@ export class Post_service {
     FROM Post
     GROUP BY reply_id
   ) c ON c.reply_id = p2.id
+  JOIN Writer ON Writer.id = p2.writer_id
   WHERE p1.writer_id = ${user_id}
     AND p1.reply_id IS NULL
     AND p2.writer_id != ${user_id}
     AND (vd.last_view IS NULL
     OR p2.created_at > vd.last_view) ORDER BY p2.created_at DESC LIMIT ${offset}, ${limit}
 `
-          ).map((value) => ({
-            ...value,
-            cmtCnt: undefined,
-            _count: { replied_post: Number(value.cmtCnt) },
-          }));
+          ).map(
+            (value): Post_dto => ({
+              id: value.id,
+              img_link: value.img_link,
+              reply_id: value.reply_id,
+              updated_at: value.updated_at,
+              view_cnt: value.view_cnt,
+              writer_id: value.writer_id,
+              content: value.content,
+              created_at: value.created_at,
+              Writer: { name: value.name, email: value.email },
+              _count: { replied_post: Number(value.cmtCnt) },
+            }),
+          );
         case 'replies':
           //  자신이 쓴 댓글에 다른 사람이 달아준 댓글
           return (
-            await prisma.$queryRaw<(Post_dto & { cmtCnt: BigInt })[]>`
-  SELECT p2.*, IFNULL(c.cmtCnt, 0) as cmtCnt
+            await prisma.$queryRaw<(PostRawQuery & { cmtCnt: BigInt })[]>`
+  SELECT p2.*, Writer.name, Writer.email, IFNULL(c.cmtCnt, 0) as cmtCnt
   FROM Post p1
   JOIN Post p2 ON p2.reply_id = p1.id
   LEFT JOIN View_date vd ON p1.id = vd.post_id AND vd.viewer_id = ${user_id}
@@ -195,17 +225,29 @@ export class Post_service {
     FROM Post
     GROUP BY reply_id
   ) c ON c.reply_id = p2.id
+  JOIN Writer ON Writer.id = p2.writer_id
   WHERE p1.writer_id = ${user_id}
     AND p1.reply_id IS NOT NULL
     AND p2.writer_id != ${user_id}
     AND (vd.last_view IS NULL
     OR p2.created_at > vd.last_view) ORDER BY p2.created_at DESC LIMIT ${offset}, ${limit}
 `
-          ).map((value) => ({
-            ...value,
-            cmtCnt: undefined,
-            _count: { replied_post: Number(value.cmtCnt) },
-          }));
+          ).map(
+            (value): Post_dto => ({
+              id: value.id,
+              img_link: value.img_link,
+              reply_id: value.reply_id,
+              updated_at: value.updated_at,
+              view_cnt: value.view_cnt,
+              writer_id: value.writer_id,
+              content: value.content,
+              created_at: value.created_at,
+              Writer: { name: value.name, email: value.email },
+              _count: { replied_post: Number(value.cmtCnt) },
+            }),
+          );
+        case 'likes':
+          throw new BadRequestException();
       }
     }
   }
@@ -227,7 +269,10 @@ export class Post_service {
           orderBy: { created_at: 'desc' },
           skip: offset,
           take: limit,
-          include: { _count: { select: { replied_post: true } } },
+          include: {
+            _count: { select: { replied_post: true } },
+            Writer: { select: { name: true, email: true } },
+          },
         },
       },
     });

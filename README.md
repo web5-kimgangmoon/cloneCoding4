@@ -556,3 +556,8 @@ filter, all, /:post_id offset과 limit 추가 필요.
 ### 10/13
 
 1. infiniteQuery 작성중.
+
+### 10/14
+
+1. backend, Posts쪽 수정(받아올 데이터에 필요한 데이터가 없었습니다), infiniteQuery로 데이터를 받아오면서 필요하면 수정필요.
+2. infiniteQuery 초안 작성 완료. 이후 테스트 하면서 수정.
