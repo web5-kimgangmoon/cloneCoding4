@@ -116,7 +116,7 @@ const UserBtn = () => {
       <MenuItems
         anchor="top start"
         className={
-          "outline-none translate-x-1/7 -translate-y-5 overflow-visible!"
+          "outline-none translate-x-1/7 -translate-y-5 overflow-visible! bg-white"
         }
       >
         <MenuSection

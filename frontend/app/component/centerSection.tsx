@@ -2,9 +2,10 @@ import clsx from "clsx";
 import { Qsort } from "../types";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useWritingBoard } from "../interactServer/action/home";
 import { useGetPostAll } from "../interactServer/data/posts";
+import { useMotionValueEvent, useScroll } from "motion/react";
 
 export const CenterSection = ({
   sort,
@@ -184,52 +185,67 @@ const WritingBlock = () => {
 const BoardListBlock = () => {
   const boardList = useGetPostAll({ offset: 0, limit: 10 });
 
-  if (
-    boardList.data.pageParams.length === 0 &&
-    (boardList.isFetching || boardList.isPending)
-  )
-    return <div></div>;
+  // useEffect(() => {}, []);
+  // if (
+  //   boardList.data.pageParams.length === 0 &&
+  //   (boardList.isFetching || boardList.isPending)
+  // )
+  //   return <div></div>;
+
+  const ulRef = useRef<HTMLUListElement | null>(null);
+  const { scrollYProgress } = useScroll({ target: ulRef });
+  useMotionValueEvent(scrollYProgress, "change", (l) => {
+    if (
+      !boardList.isPending &&
+      !boardList.isFetching &&
+      boardList.hasNextPage &&
+      l > 0.8
+    ) {
+      boardList.fetchNextPage();
+    }
+  });
   return (
     <div>
-      <ul className="">
-        {/* {boardList.data.pages[0].posts.map((v)=><LiBoard
-        user={v.}
-        />)} */}
-        <LiBoard
-          user="김강문"
-          email="@SSD"
-          img="search.svg"
-          content="joke"
-          boardId={0}
-        />
-        <LiBoard
-          user="김강문"
-          email="@SSD"
-          img="search.svg"
-          content="joke"
-          boardId={1}
-        />
-        <LiBoard
-          user="김강문"
-          email="@SSD"
-          img="search.svg"
-          content="joke"
-          boardId={2}
-        />
-        <LiBoard
-          user="김강문"
-          email="@SSD"
-          img="search.svg"
-          content="joke"
-          boardId={3}
-        />
-        <LiBoard
-          user="김강문"
-          email="@SSD"
-          img="search.svg"
-          content="joke"
-          boardId={4}
-        />
+      <ul className="" ref={ulRef}>
+        {boardList.data.pages[0] &&
+          boardList.data.pages[0].posts.map((v) => (
+            <LiBoard
+              user={v.Writer.name}
+              email={v.Writer.email}
+              img={v.img_link}
+              content={v.content}
+              boardId={v.id}
+              viewCnt={v.view_cnt}
+              cmtCnt={v._count.replied_post}
+              likeCnt={v._count.Like}
+              key={v.id}
+            />
+          ))}
+        {boardList.data.pages.length > 1 &&
+          boardList.data.pages.map((p) => {
+            return p.posts
+              .map((v) => (
+                <LiBoard
+                  user={v.Writer.name}
+                  email={v.Writer.email}
+                  img={v.img_link}
+                  content={v.content}
+                  boardId={v.id}
+                  viewCnt={v.view_cnt}
+                  cmtCnt={v._count.replied_post}
+                  likeCnt={v._count.Like}
+                  key={v.id}
+                />
+              ))
+              .flat();
+          })}
+        {boardList.isPending && boardList.isFetching && (
+          <div className="flex justify-center items-center w-full h-30">
+            <div className="flex justify-center items-center border-7 border-t-blue-300 border-gray-200 aspect-square animate-spin rounded-full">
+              <div className="w-4 aspect-square bg-white rounded-full"></div>
+            </div>
+          </div>
+        )}
       </ul>
     </div>
   );
@@ -241,12 +257,18 @@ const LiBoard = ({
   user,
   email,
   boardId,
+  cmtCnt,
+  viewCnt,
+  likeCnt,
 }: {
   content: string;
-  img: string;
+  img: string | null;
   user: string;
   email: string;
   boardId: number;
+  cmtCnt: number;
+  viewCnt: number;
+  likeCnt: number;
 }) => {
   return (
     <li className={"relative border-t last:border-b border-Lgray p-2"}>
@@ -266,22 +288,24 @@ const LiBoard = ({
         <div className="grow pl-2">
           <h6 className="flex text-sm w-full gap-1 text-[1rem]">
             <strong className="font-bold">{user}</strong>
-            <strong className="text-Dgray">{email}</strong>
+            <strong className="text-Dgray">@{email.split("@")[0]}</strong>
           </h6>
           <p className="pb-1">{content}</p>
-          <div className="relative w-full aspect-3/2">
-            <Image
-              src={img}
-              alt={img}
-              className="border border-Dgray rounded-4xl"
-              fill
-              style={{ objectFit: "fill" }}
-            ></Image>
-          </div>
+          {img !== null && (
+            <div className="relative w-full aspect-3/2">
+              <Image
+                src={`${process.env.NEXT_PUBLIC_SERVER_URL}/img?img=${img}`}
+                alt={img}
+                className="border border-Dgray rounded-4xl"
+                fill
+                style={{ objectFit: "fill" }}
+              ></Image>
+            </div>
+          )}
           <footer className="flex pt-2">
-            <BIcon src="comment.svg" value={280}></BIcon>
-            <BIcon src="Heart.svg" value={280}></BIcon>
-            <BIcon src="view 1.svg" value={280}></BIcon>
+            <BIcon src="comment.svg" value={cmtCnt}></BIcon>
+            <BIcon src="Heart.svg" value={likeCnt}></BIcon>
+            <BIcon src="view 1.svg" value={viewCnt}></BIcon>
           </footer>
         </div>
       </Link>

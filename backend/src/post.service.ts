@@ -105,7 +105,7 @@ export class Post_service {
       take: limit,
       orderBy: { created_at: 'desc' },
       include: {
-        _count: { select: { replied_post: true } },
+        _count: { select: { replied_post: true, Like: true } },
         Writer: { select: { name: true, email: true } },
       },
     });
@@ -127,7 +127,7 @@ export class Post_service {
             take: limit,
             orderBy: { created_at: 'desc' },
             include: {
-              _count: { select: { replied_post: true } },
+              _count: { select: { replied_post: true, Like: true } },
               Writer: { select: { name: true, email: true } },
             },
           });
@@ -139,7 +139,7 @@ export class Post_service {
             take: limit,
             orderBy: { created_at: 'desc' },
             include: {
-              _count: { select: { replied_post: true } },
+              _count: { select: { replied_post: true, Like: true } },
               Writer: { select: { name: true, email: true } },
             },
           });
@@ -148,7 +148,7 @@ export class Post_service {
           // 자신이 추천한 게시글 혹은 댓글
           return (
             await prisma.$queryRaw<(PostRawQuery & { cmtCnt: BigInt })[]>`
-          SELECT p.*, Writer.name, Writer.email, IFNULL(c.cmtCnt, 0) as cmtCnt
+          SELECT p.*, User.name, User.email, IFNULL(c.cmtCnt, 0) as cmtCnt, IFNULL(plV.likeCnt, 0) as likeCnt
           FROM Post p
           JOIN Post_like pl ON pl.post_id = p.id
           LEFT JOIN (
@@ -157,7 +157,12 @@ export class Post_service {
             WHERE reply_id IS NOT NULL
             GROUP BY reply_id
           ) c on c.reply_id = p.id
-          JOIN Writer ON Writer.id = p.writer_id
+          LEFT JOIN (
+            SELECT post_id, COUNT(*) as likeCnt
+            FROM Post_like
+            GROUP BY post_id
+          ) plV on plV.post_id = p.id
+          JOIN User ON User.id = p.writer_id
           WHERE pl.user_id = ${user_id} ORDER BY p.created_at DESC LIMIT ${offset}, ${limit}`
           ).map(
             (value): Post_dto => ({
@@ -170,7 +175,10 @@ export class Post_service {
               content: value.content,
               created_at: value.created_at,
               Writer: { name: value.name, email: value.email },
-              _count: { replied_post: Number(value.cmtCnt) },
+              _count: {
+                replied_post: Number(value.cmtCnt),
+                Like: Number(value.likeCnt),
+              },
             }),
           );
       }
@@ -182,7 +190,7 @@ export class Post_service {
           //  자신이 쓴 게시글에 다른 사람이 달아준 댓글
           return (
             await prisma.$queryRaw<(PostRawQuery & { cmtCnt: BigInt })[]>`
-  SELECT p2.*, Writer.name, Writer.email, IFNULL(c.cmtCnt, 0) as cmtCnt
+  SELECT p2.*, User.name, User.email, IFNULL(c.cmtCnt, 0) as cmtCnt, IFNULL(plV.likeCnt, 0) as likeCnt
   FROM Post p1
   JOIN Post p2 ON p2.reply_id = p1.id
   LEFT JOIN View_date vd ON p1.id = vd.post_id AND vd.viewer_id = ${user_id}
@@ -191,7 +199,12 @@ export class Post_service {
     FROM Post
     GROUP BY reply_id
   ) c ON c.reply_id = p2.id
-  JOIN Writer ON Writer.id = p2.writer_id
+  LEFT JOIN (
+    SELECT post_id, COUNT(*) as likeCnt
+    FROM Post_like
+    GROUP BY post_id
+  ) plV on plV.post_id = p2.id
+  JOIN User ON User.id = p2.writer_id
   WHERE p1.writer_id = ${user_id}
     AND p1.reply_id IS NULL
     AND p2.writer_id != ${user_id}
@@ -209,14 +222,17 @@ export class Post_service {
               content: value.content,
               created_at: value.created_at,
               Writer: { name: value.name, email: value.email },
-              _count: { replied_post: Number(value.cmtCnt) },
+              _count: {
+                replied_post: Number(value.cmtCnt),
+                Like: Number(value.likeCnt),
+              },
             }),
           );
         case 'replies':
           //  자신이 쓴 댓글에 다른 사람이 달아준 댓글
           return (
             await prisma.$queryRaw<(PostRawQuery & { cmtCnt: BigInt })[]>`
-  SELECT p2.*, Writer.name, Writer.email, IFNULL(c.cmtCnt, 0) as cmtCnt
+  SELECT p2.*, User.name, User.email, IFNULL(c.cmtCnt, 0) as cmtCnt, IFNULL(plV.likeCnt, 0) as likeCnt
   FROM Post p1
   JOIN Post p2 ON p2.reply_id = p1.id
   LEFT JOIN View_date vd ON p1.id = vd.post_id AND vd.viewer_id = ${user_id}
@@ -225,7 +241,12 @@ export class Post_service {
     FROM Post
     GROUP BY reply_id
   ) c ON c.reply_id = p2.id
-  JOIN Writer ON Writer.id = p2.writer_id
+  LEFT JOIN (
+    SELECT post_id, COUNT(*) as likeCnt
+    FROM Post_like
+    GROUP BY post_id
+  ) plV on plV.post_id = p2.id
+  JOIN User ON User.id = p2.writer_id
   WHERE p1.writer_id = ${user_id}
     AND p1.reply_id IS NOT NULL
     AND p2.writer_id != ${user_id}
@@ -243,7 +264,10 @@ export class Post_service {
               content: value.content,
               created_at: value.created_at,
               Writer: { name: value.name, email: value.email },
-              _count: { replied_post: Number(value.cmtCnt) },
+              _count: {
+                replied_post: Number(value.cmtCnt),
+                Like: Number(value.likeCnt),
+              },
             }),
           );
         case 'likes':
@@ -270,10 +294,10 @@ export class Post_service {
           skip: offset,
           take: limit,
           include: {
-            _count: { select: { replied_post: true } },
-            Writer: { select: { name: true, email: true } },
+            _count: { select: { replied_post: true, Like: true } },
           },
         },
+        Writer: { select: { name: true, email: true } },
       },
     });
     if (target === null)

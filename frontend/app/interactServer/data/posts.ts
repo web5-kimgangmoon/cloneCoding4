@@ -16,13 +16,16 @@ export const useGetPostAll = ({ limit, offset }: GetBoardQueryReq) =>
   >({
     queryKey: ["get", "post", "all"],
     queryFn: async (c) => {
-      c.pageParam;
-      return await axiosRoot.get("/post/all");
+      return (
+        await axiosRoot.get("/post/all", {
+          params: { limit, offset: c.pageParam.offset },
+        })
+      ).data;
     },
     initialData: { pages: [], pageParams: [] },
     initialPageParam: { limit, offset },
     getNextPageParam: (l, a) => {
       if (l.posts.length < 10) return undefined;
-      return { limit, offset: a.length };
+      return { limit, offset: a.length * 10 };
     },
   });

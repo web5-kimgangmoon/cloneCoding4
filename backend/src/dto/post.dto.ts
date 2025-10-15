@@ -4,6 +4,9 @@ import { Post } from '@prisma/client';
 export class _Count {
   @ApiProperty({ name: 'replied_post', type: 'number' })
   replied_post: number;
+
+  @ApiProperty({ name: 'Like', type: 'number' })
+  Like: number;
 }
 
 export class PostRawQuery implements Post {
@@ -56,14 +59,17 @@ export class PostRawQuery implements Post {
   @ApiProperty({ name: 'view_cnt', type: 'number', minLength: 0 })
   view_cnt: number;
 
+  @ApiProperty({ name: 'cmtCnt', type: 'number', minLength: 0 })
+  cmtCnt: number;
+
+  @ApiProperty({ name: 'likeCnt', type: 'number', minLength: 0 })
+  likeCnt: number;
+
   @ApiProperty({ name: 'created_at', type: 'string', format: 'date-time' })
   created_at: Date;
 
   @ApiProperty({ name: 'updated_at', type: 'string', format: 'date-time' })
   updated_at: Date;
-
-  @ApiProperty({ name: '_count', type: () => _Count, description: '댓글수' })
-  _count: { replied_post: number };
   //   Like: Like[];
   //   ViewDate: ViewDate[];
   //   repliedPost: Post[];
@@ -127,7 +133,7 @@ export class Post_dto implements Post {
   updated_at: Date;
 
   @ApiProperty({ name: '_count', type: () => _Count, description: '댓글수' })
-  _count: { replied_post: number };
+  _count: { replied_post: number; Like: number };
   //   Like: Like[];
   //   ViewDate: ViewDate[];
   //   repliedPost: Post[];

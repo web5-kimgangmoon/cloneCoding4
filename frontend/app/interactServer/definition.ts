@@ -16,6 +16,10 @@ export interface GetBoardBodyRes {
     id: number;
     writer_id: number;
     reply_id: number;
+    Writer: {
+      name: string;
+      email: string;
+    };
     content: string;
     img_link: string;
     view_cnt: number;
@@ -23,6 +27,7 @@ export interface GetBoardBodyRes {
     updated_at: Date;
     _count: {
       replied_post: number;
+      Like: number;
     };
   }[];
 }

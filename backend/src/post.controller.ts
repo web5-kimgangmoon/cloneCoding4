@@ -127,6 +127,7 @@ export class Post_controller {
 
   @Get('/all')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
   //swagger
   @ApiOkResponse({
     description: '모든 게시글을 보여줍니다.',
