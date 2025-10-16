@@ -567,3 +567,7 @@ filter, all, /:post_id offset과 limit 추가 필요.
 1. api문서 수정, 서비스 수정, post쪽 데이터 추가.(backend)
 2. frontend는 infiniteQuery 수정, 임시로 사용한 img 태그를 next 설정을 수정후 image 태그로 변경했습니다.
 3. framer-motion 라이브러리의 useScroll과 useinfinitequery를 결합하여, 스크롤에 따라 데이터를 받아오도록 코딩했습니다.
+
+### 10/16
+
+1. 반응형 추가중

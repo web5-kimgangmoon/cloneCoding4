@@ -5,7 +5,12 @@ import {
   MenuItems,
   MenuSection,
 } from "@headlessui/react";
-import { BellIcon, HomeIcon, UserIcon } from "@heroicons/react/24/outline";
+import {
+  BellIcon,
+  HomeIcon,
+  PencilIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,7 +19,7 @@ export const LeftSection = () => {
   return (
     <section className="sticky top-0 flex flex-col justify-between w-2/7 py-1 pr-2 h-screen select-none border-r border-Lgray">
       <div>
-        <header className="w-10 h-10">
+        <header className="w-8 h-8">
           <Logo />
         </header>
 
@@ -47,23 +52,26 @@ const MenuBar = ({ selectedStr }: { selectedStr: string }) => {
     { icon: "notification", href: "/", title: "Notification" },
   ];
   return (
-    <nav>
-      <ul className="grid gap-5 py-5">
+    <nav className="">
+      <ul className="flex flex-col gap-5 py-5">
         {menuArr.map((v, idx) => (
           <li className="w-fit" key={idx}>
-            <Link href={"/"} className="flex items-center gap-2">
+            <Link
+              href={"/"}
+              className="transition-[width] w-8 lg:w-full flex items-center gap-2"
+            >
               {v.icon === "Home" && (
-                <HomeIcon className="inline-block w-10 h-10" />
+                <HomeIcon className="inline-block w-8 h-8" />
               )}
               {v.icon === "profile" && (
-                <UserIcon className="inline-block w-10 h-10" />
+                <UserIcon className="inline-block w-8 h-8" />
               )}
               {v.icon === "notification" && (
-                <BellIcon className="inline-block w-10 h-10" />
+                <BellIcon className="inline-block w-8 h-8" />
               )}
               <span
                 className={clsx(
-                  "text-xl",
+                  "text-xl hidden lg:inline",
                   selectedStr === v.title && "font-bold"
                 )}
               >
@@ -79,7 +87,10 @@ const MenuBar = ({ selectedStr }: { selectedStr: string }) => {
 
 const PostBtn = () => {
   return (
-    <button className="bg-black text-white py-1 w-35 rounded-4xl">Post</button>
+    <button className="bg-black text-white py-1 w-10 lg:w-35 rounded-4xl transition-[width]">
+      <span className="hidden lg:inline">Post</span>
+      <PencilIcon className="inline lg:hidden h-7" />
+    </button>
   );
 };
 
@@ -88,7 +99,7 @@ const UserBtn = () => {
     <Menu>
       <MenuButton
         className={
-          "relative flex items-center mb-3 px-5 py-3 outline-none hover:bg-gray-200 rounded-4xl cursor-pointer"
+          "w-18 lg:w-full relative flex items-center mb-3 px-5 py-3 outline-none hover:bg-gray-200 rounded-4xl cursor-pointer"
         }
       >
         <span className="block relative w-12 aspect-square">
@@ -100,11 +111,11 @@ const UserBtn = () => {
             fill
           ></Image>
         </span>
-        <span className="block text-sm w-full pl-2">
+        <span className="hidden lg:block text-sm w-full pl-2">
           <span className="block text-left font-bold">김강문</span>
           <span className="block text-left text-Dgray">@SSD</span>
         </span>
-        <span className="block relative w-4 h-4">
+        <span className="hidden lg:block relative w-4 h-4">
           <Image
             src={"···.svg"}
             alt="···.svg"
