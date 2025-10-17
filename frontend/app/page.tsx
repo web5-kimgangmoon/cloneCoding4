@@ -21,7 +21,7 @@ export default function Home() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="relative container flex mx-auto xl:max-w-[1440px] min-h-screen h-max">
+      <div className="relative container flex justify-center md:mx-auto xl:max-w-[1440px] min-h-screen h-max">
         <LeftSection></LeftSection>
         <CenterSection sort={sort} path={path}></CenterSection>
         <RightSection></RightSection>

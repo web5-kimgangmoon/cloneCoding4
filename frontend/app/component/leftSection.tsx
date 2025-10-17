@@ -1,4 +1,5 @@
 import {
+  _internal_ComponentMenuItems,
   Menu,
   MenuButton,
   MenuItem,
@@ -14,11 +15,12 @@ import {
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
+import { useRef } from "react";
 
 export const LeftSection = () => {
   return (
-    <section className="sticky top-0 flex flex-col justify-between w-2/7 py-1 pr-2 h-screen select-none border-r border-Lgray">
-      <div>
+    <section className="sticky top-0 flex flex-col justify-between px-3 py-1 pr-2 h-screen select-none">
+      <div className="flex flex-col items-center md:items-start">
         <header className="w-8 h-8">
           <Logo />
         </header>
@@ -87,22 +89,24 @@ const MenuBar = ({ selectedStr }: { selectedStr: string }) => {
 
 const PostBtn = () => {
   return (
-    <button className="bg-black text-white py-1 w-10 lg:w-35 rounded-4xl transition-[width]">
+    <button className="bg-black text-white p-1 lg:w-35 rounded-4xl transition-[width]">
       <span className="hidden lg:inline">Post</span>
-      <PencilIcon className="inline lg:hidden h-7" />
+      <PencilIcon className="inline lg:hidden h-6" />
     </button>
   );
 };
 
 const UserBtn = () => {
+  const popUpRef = useRef<_internal_ComponentMenuItems | null>(null);
+
   return (
     <Menu>
       <MenuButton
         className={
-          "w-18 lg:w-full relative flex items-center mb-3 px-5 py-3 outline-none hover:bg-gray-200 rounded-4xl cursor-pointer"
+          "lg:w-full relative flex items-center mb-3 lg:px-5 p-3 outline-none hover:bg-gray-200 rounded-4xl cursor-pointer"
         }
       >
-        <span className="block relative w-12 aspect-square">
+        <span className="block relative w-10 aspect-square">
           <Image
             className="rounded-full"
             src={"userImg.svg"}
@@ -111,11 +115,11 @@ const UserBtn = () => {
             fill
           ></Image>
         </span>
-        <span className="hidden lg:block text-sm w-full pl-2">
+        <span className="hidden lg:block text-sm pl-2 grow">
           <span className="block text-left font-bold">김강문</span>
           <span className="block text-left text-Dgray">@SSD</span>
         </span>
-        <span className="hidden lg:block relative w-4 h-4">
+        <span className="hidden lg:block relative ml-4 w-4 h-4">
           <Image
             src={"···.svg"}
             alt="···.svg"
@@ -125,10 +129,8 @@ const UserBtn = () => {
         </span>
       </MenuButton>
       <MenuItems
-        anchor="top start"
-        className={
-          "outline-none translate-x-1/7 -translate-y-5 overflow-visible! bg-white"
-        }
+        anchor={{ to: "top start", gap: 15 }}
+        className={"outline-none overflow-visible! bg-white"}
       >
         <MenuSection
           className={
@@ -152,7 +154,7 @@ const UserBtn = () => {
             </a>
           </MenuItem>
         </MenuSection>
-        <div className="absolute -bottom-1 left-1/2 -translate-x-1 rotate-45 w-2 aspect-square bg-white shadow-LBmd border-l-Lgray border-b-Lgray"></div>
+        <div className="absolute -bottom-1 left-1/5 lg:left-1/2 -translate-x-1 rotate-45 w-2 aspect-square bg-white shadow-LBmd border-l-Lgray border-b-Lgray"></div>
       </MenuItems>
     </Menu>
   );

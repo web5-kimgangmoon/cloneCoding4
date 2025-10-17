@@ -15,7 +15,7 @@ export const CenterSection = ({
   path: string;
 }) => {
   return (
-    <section className="w-full">
+    <section className="w-[450px] md:min-w-[450px] border-x border-Lgray grow-0">
       <SortMenu sort={sort} path={path}></SortMenu>
       <WritingBlock />
       <BoardListBlock />
